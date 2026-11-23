@@ -1312,10 +1312,18 @@
     }
 
     async function processScannedBoothCode(rawText) {
-      const match = String(rawText).match(/(\d+)/);
-      const boothId = match ? Number(match[1]) : 0;
+      const cleaned = String(rawText || "").trim().toUpperCase();
+      // 오직 우리 축제 부스 전용 QR 코드 형식(BOOTH_01 ~ BOOTH_27)만 허용 (일반 URL/바코드 숫자 오인식 차단)
+      const match = cleaned.match(/^BOOTH_(\d{1,2})$/);
+      if (!match) {
+        const preview = cleaned.length > 24 ? cleaned.slice(0, 24) + "..." : cleaned;
+        showToast(`❌ 축제 부스 전용 QR이 아닙니다. (${preview})`);
+        return;
+      }
+
+      const boothId = Number(match[1]);
       if (boothId < 1 || boothId > AppState.booths.length) {
-        showToast("❌ 유효하지 않은 부스 QR 코드입니다.");
+        showToast(`❌ 유효하지 않은 부스 번호입니다. (${boothId}번)`);
         return;
       }
 
