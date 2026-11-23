@@ -298,6 +298,11 @@
           <input id="login-student-pw" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required placeholder="숫자 4자리 입력 (예: 1234)" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-base font-black tracking-widest text-center text-slate-900 focus:outline-none focus:border-amber-500" />
         </div>
 
+        <div id="student-pw-confirm-wrap">
+          <label class="text-[11px] font-black text-amber-800 block mb-1">개인 비밀번호 한 번 더 확인 (첫 로그인 필수)</label>
+          <input id="login-student-pw-confirm" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="위 숫자 4자리 동일하게 재입력" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)" class="w-full bg-amber-50/60 border border-amber-300 rounded-xl px-3.5 py-3 text-base font-black tracking-widest text-center text-slate-900 focus:outline-none focus:border-amber-500" />
+        </div>
+
         <button id="btn-submit-student" type="submit" class="w-full py-3.5 rounded-2xl amber-hero-grad hover:brightness-105 active:scale-[0.98] text-white font-black text-base shadow-md transition">
           축제 즐기러 가기 →
         </button>
@@ -320,6 +325,11 @@
           <input id="login-staff-pw" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required placeholder="숫자 4자리 입력 (예: 0000)" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-base font-black tracking-widest text-center text-slate-900 focus:outline-none focus:border-amber-500" />
         </div>
 
+        <div id="staff-pw-confirm-wrap">
+          <label class="text-[11px] font-black text-amber-800 block mb-1">개인 비밀번호 한 번 더 확인 (첫 로그인 필수)</label>
+          <input id="login-staff-pw-confirm" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="위 숫자 4자리 동일하게 재입력" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)" class="w-full bg-amber-50/60 border border-amber-300 rounded-xl px-3.5 py-3 text-base font-black tracking-widest text-center text-slate-900 focus:outline-none focus:border-amber-500" />
+        </div>
+
         <button id="btn-submit-staff" type="submit" class="w-full py-3.5 rounded-2xl amber-hero-grad hover:brightness-105 active:scale-[0.98] text-white font-black text-base shadow-md transition">
           교직원 스탬프북 입장 →
         </button>
@@ -338,6 +348,11 @@
         <div>
           <label class="text-[11px] font-black text-slate-600 block mb-1">개인 비밀번호 (숫자 4자리)</label>
           <input id="login-parent-pw" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required placeholder="숫자 4자리 입력 (예: 0000)" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-3 text-base font-black tracking-widest text-center text-slate-900 focus:outline-none focus:border-amber-500" />
+        </div>
+
+        <div id="parent-pw-confirm-wrap">
+          <label class="text-[11px] font-black text-amber-800 block mb-1">개인 비밀번호 한 번 더 확인 (첫 로그인 필수)</label>
+          <input id="login-parent-pw-confirm" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="위 숫자 4자리 동일하게 재입력" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,4)" class="w-full bg-amber-50/60 border border-amber-300 rounded-xl px-3.5 py-3 text-base font-black tracking-widest text-center text-slate-900 focus:outline-none focus:border-amber-500" />
         </div>
 
         <button id="btn-submit-parent" type="submit" class="w-full py-3.5 rounded-2xl amber-hero-grad hover:brightness-105 active:scale-[0.98] text-white font-black text-base shadow-md transition">
@@ -1506,17 +1521,24 @@
     function onStaffSelectChange() {
       const name = (document.getElementById("login-staff-select")?.value || "").trim();
       const hint = document.getElementById("staff-pw-hint");
+      const confirmWrap = document.getElementById("staff-pw-confirm-wrap");
+      const confirmInput = document.getElementById("login-staff-pw-confirm");
       if (!hint) return;
       if (!name) {
         hint.textContent = "※ 교직원 성함을 선택 후 최초 1회 숫자 4자리 개인 비밀번호를 설정합니다.";
+        if (confirmWrap) confirmWrap.classList.remove("hidden");
         return;
       }
       const userId = `G_교사_${name}`;
       const existing = AppState.users.find(u => u.userId === userId);
-      if (existing && existing.hasPasscode) {
+      const isRegistered = Boolean((existing && existing.hasPasscode) || localStorage.getItem(`sh_local_pw_${userId}`));
+      if (isRegistered) {
         hint.textContent = `✅ [${name}] 선생님, 설정하신 숫자 4자리 비밀번호를 입력하세요.`;
+        if (confirmWrap) confirmWrap.classList.add("hidden");
+        if (confirmInput) confirmInput.value = "";
       } else {
-        hint.textContent = `🆕 [${name}] 선생님 첫 로그인입니다! 사용할 숫자 4자리 개인 비밀번호를 설정하세요.`;
+        hint.textContent = `🆕 [${name}] 선생님 첫 로그인입니다! 오타 방지를 위해 숫자 4자리를 두 번 동일하게 입력하세요.`;
+        if (confirmWrap) confirmWrap.classList.remove("hidden");
       }
     }
 
@@ -1559,10 +1581,13 @@
       const n = Number(document.getElementById("login-number").value || 0);
       const nameInput = document.getElementById("login-student-name");
       const hint = document.getElementById("student-pw-hint");
+      const confirmWrap = document.getElementById("student-pw-confirm-wrap");
+      const confirmInput = document.getElementById("login-student-pw-confirm");
 
       if (!g || !c || !n) {
         nameInput.value = "";
-        hint.textContent = "※ 첫 로그인 시 입력한 숫자 4자리가 본인 비밀번호로 설정됩니다.";
+        hint.textContent = "※ 첫 로그인 시 오타 방지를 위해 숫자 4자리를 두 번 입력합니다.";
+        if (confirmWrap) confirmWrap.classList.remove("hidden");
         return;
       }
 
@@ -1572,30 +1597,42 @@
         nameInput.value = found.name;
         const userId = `S_${g}_${c}_${n}_${found.name}`;
         const existingUser = AppState.users.find(u => u.userId === userId);
-        if (existingUser && existingUser.hasPasscode) {
+        const isRegistered = Boolean((existingUser && existingUser.hasPasscode) || localStorage.getItem(`sh_local_pw_${userId}`));
+        if (isRegistered) {
           hint.textContent = "✅ 이미 비밀번호가 등록된 학생입니다. 본인의 숫자 4자리를 입력하세요.";
+          if (confirmWrap) confirmWrap.classList.add("hidden");
+          if (confirmInput) confirmInput.value = "";
         } else {
-          hint.textContent = "🆕 첫 로그인입니다! 사용할 숫자 4자리 개인 비밀번호를 설정하세요.";
+          hint.textContent = "🆕 첫 로그인입니다! 오타 방지를 위해 숫자 4자리를 두 번 동일하게 입력하세요.";
+          if (confirmWrap) confirmWrap.classList.remove("hidden");
         }
       } else {
         nameInput.value = "";
         hint.textContent = "해당 번호에 등록된 학생이 없습니다.";
+        if (confirmWrap) confirmWrap.classList.remove("hidden");
       }
     }
 
     function updateParentPwHint() {
       const name = document.getElementById("login-parent-name").value.trim();
       const hint = document.getElementById("parent-pw-hint");
+      const confirmWrap = document.getElementById("parent-pw-confirm-wrap");
+      const confirmInput = document.getElementById("login-parent-pw-confirm");
       if (!name) {
         hint.textContent = "※ 학부모님 성함별로 최초 1회 숫자 4자리 개인 비밀번호를 설정합니다.";
+        if (confirmWrap) confirmWrap.classList.remove("hidden");
         return;
       }
       const userId = `G_학부모_${name}`;
       const existing = AppState.users.find(u => u.userId === userId);
-      if (existing && existing.hasPasscode) {
+      const isRegistered = Boolean((existing && existing.hasPasscode) || localStorage.getItem(`sh_local_pw_${userId}`));
+      if (isRegistered) {
         hint.textContent = "✅ 이미 등록된 학부모님입니다. 설정하신 숫자 4자리 비밀번호를 입력하세요.";
+        if (confirmWrap) confirmWrap.classList.add("hidden");
+        if (confirmInput) confirmInput.value = "";
       } else {
-        hint.textContent = "🆕 첫 로그인입니다! 사용할 숫자 4자리 개인 비밀번호를 설정하세요.";
+        hint.textContent = "🆕 첫 로그인입니다! 오타 방지를 위해 숫자 4자리를 두 번 동일하게 입력하세요.";
+        if (confirmWrap) confirmWrap.classList.remove("hidden");
       }
     }
 
@@ -1606,6 +1643,8 @@
       const number = Number(document.getElementById("login-number").value);
       const name = document.getElementById("login-student-name").value.trim();
       const passcode = document.getElementById("login-student-pw").value.trim();
+      const confirmWrap = document.getElementById("student-pw-confirm-wrap");
+      const passcodeConfirm = (document.getElementById("login-student-pw-confirm")?.value || "").trim();
 
       if (!grade || !classNum || !number || !name) {
         showToast("학년·반·번호를 모두 선택해 주세요.");
@@ -1614,6 +1653,16 @@
       if (!/^\d{4}$/.test(passcode)) {
         showToast("비밀번호는 숫자 4자리로 입력해야 합니다.");
         return;
+      }
+      if (confirmWrap && !confirmWrap.classList.contains("hidden")) {
+        if (!/^\d{4}$/.test(passcodeConfirm)) {
+          showToast("비밀번호 확인란에도 숫자 4자리를 동일하게 입력해 주세요.");
+          return;
+        }
+        if (passcode !== passcodeConfirm) {
+          showToast("❌ 입력한 두 비밀번호가 일치하지 않습니다. 다시 확인해 주세요!");
+          return;
+        }
       }
 
       const btn = document.getElementById("btn-submit-student");
@@ -1666,6 +1715,8 @@
       e.preventDefault();
       const name = document.getElementById("login-staff-select").value.trim();
       const passcode = document.getElementById("login-staff-pw").value.trim();
+      const confirmWrap = document.getElementById("staff-pw-confirm-wrap");
+      const passcodeConfirm = (document.getElementById("login-staff-pw-confirm")?.value || "").trim();
 
       if (!name) {
         showToast("교직원 명렬에서 성함을 선택해 주세요.");
@@ -1674,6 +1725,16 @@
       if (!/^\d{4}$/.test(passcode)) {
         showToast("비밀번호는 숫자 4자리로 입력해야 합니다.");
         return;
+      }
+      if (confirmWrap && !confirmWrap.classList.contains("hidden")) {
+        if (!/^\d{4}$/.test(passcodeConfirm)) {
+          showToast("비밀번호 확인란에도 숫자 4자리를 동일하게 입력해 주세요.");
+          return;
+        }
+        if (passcode !== passcodeConfirm) {
+          showToast("❌ 입력한 두 비밀번호가 일치하지 않습니다. 다시 확인해 주세요!");
+          return;
+        }
       }
 
       const btn = document.getElementById("btn-submit-staff");
@@ -1687,6 +1748,8 @@
       e.preventDefault();
       const name = document.getElementById("login-parent-name").value.trim();
       const passcode = document.getElementById("login-parent-pw").value.trim();
+      const confirmWrap = document.getElementById("parent-pw-confirm-wrap");
+      const passcodeConfirm = (document.getElementById("login-parent-pw-confirm")?.value || "").trim();
 
       if (!name) {
         showToast("성함을 입력해 주세요.");
@@ -1695,6 +1758,16 @@
       if (!/^\d{4}$/.test(passcode)) {
         showToast("비밀번호는 숫자 4자리로 입력해야 합니다.");
         return;
+      }
+      if (confirmWrap && !confirmWrap.classList.contains("hidden")) {
+        if (!/^\d{4}$/.test(passcodeConfirm)) {
+          showToast("비밀번호 확인란에도 숫자 4자리를 동일하게 입력해 주세요.");
+          return;
+        }
+        if (passcode !== passcodeConfirm) {
+          showToast("❌ 입력한 두 비밀번호가 일치하지 않습니다. 다시 확인해 주세요!");
+          return;
+        }
       }
 
       const btn = document.getElementById("btn-submit-parent");
@@ -1761,8 +1834,14 @@
     function logoutUser() {
       AppState.currentUser = null;
       document.getElementById("login-student-pw").value = "";
+      document.getElementById("login-student-pw-confirm").value = "";
       document.getElementById("login-staff-pw").value = "";
+      document.getElementById("login-staff-pw-confirm").value = "";
       document.getElementById("login-parent-pw").value = "";
+      document.getElementById("login-parent-pw-confirm").value = "";
+      onStudentSelectChange();
+      onStaffSelectChange();
+      updateParentPwHint();
       switchView("view-front");
       showToast("로그아웃되었습니다.");
     }
