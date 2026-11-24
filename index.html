@@ -176,9 +176,17 @@
     <section id="view-guide" class="hidden view-section flex-1 flex flex-col justify-between p-5">
       <div class="space-y-4">
         <div class="amber-hero-grad text-white rounded-3xl p-5 shadow-lg">
-          <span class="text-[11px] font-black bg-white/25 px-3 py-0.5 rounded-full">FESTIVAL GUIDE</span>
-          <h2 class="text-xl font-black mt-2">은행꿈나무 축제 참여 안내</h2>
-          <p class="text-xs text-amber-100 mt-1">로그인 전 아래 참여 안내를 꼭 확인해 주세요!</p>
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <span class="text-[11px] font-black bg-white/25 px-3 py-0.5 rounded-full">FESTIVAL GUIDE</span>
+              <h2 class="text-xl font-black mt-2">은행꿈나무 축제 참여 안내</h2>
+              <p class="text-xs text-amber-100 mt-1">로그인 전 아래 참여 안내를 꼭 확인해 주세요!</p>
+            </div>
+            <button type="button" onclick="openLeafletModal()" class="shrink-0 bg-white text-amber-900 hover:bg-amber-50 active:scale-95 font-black text-xs px-3.5 py-2.5 rounded-2xl shadow-lg border border-amber-200 flex flex-col items-center justify-center gap-0.5 transition">
+              <span class="text-lg leading-none">📖</span>
+              <span>축제 리플렛</span>
+            </button>
+          </div>
         </div>
 
         <div class="space-y-3">
@@ -888,6 +896,123 @@
     </div>
   </div>
 
+  <!-- ==================== 2026 제27회 은행꿈나무 축제 리플렛 뷰어 모달 ==================== -->
+  <div id="leaflet-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4" onclick="if(event.target===this) closeModal('leaflet-modal')">
+    <div class="bg-[#fffdf7] border-2 border-amber-300 rounded-3xl w-full max-w-md max-h-[90dvh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- 상단 헤더 -->
+      <div class="amber-hero-grad text-white px-4 py-3.5 flex items-center justify-between shrink-0">
+        <div>
+          <span class="text-[10px] font-black bg-white/25 px-2.5 py-0.5 rounded-full">OFFICIAL BROCHURE</span>
+          <h3 class="text-base font-black mt-0.5">🍂 제27회 은행꿈나무축제 리플렛</h3>
+        </div>
+        <button type="button" onclick="closeModal('leaflet-modal')" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white font-black flex items-center justify-center">✕</button>
+      </div>
+
+      <!-- 3면 전환 탭 (표지·인사말 / 1부 체험마당 / 2부 공연마당) -->
+      <div class="grid grid-cols-3 gap-1 bg-amber-100/90 p-1.5 border-b border-amber-200 shrink-0">
+        <button id="leaflet-tab-cover" onclick="switchLeafletTab('cover')" class="py-2 rounded-xl text-xs font-black bg-white text-amber-950 shadow-2xs transition">
+          📜 표지·격려사
+        </button>
+        <button id="leaflet-tab-part1" onclick="switchLeafletTab('part1')" class="py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+          🎪 1부 체험마당
+        </button>
+        <button id="leaflet-tab-part2" onclick="switchLeafletTab('part2')" class="py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+          🎤 2부 공연마당
+        </button>
+      </div>
+
+      <!-- 리플렛 본문 스크롤 영역 -->
+      <div class="flex-1 overflow-y-auto p-4 space-y-4 text-slate-800">
+
+        <!-- [면 1] 표지 + 학교장 격려사 + 모시는 글 -->
+        <div id="leaflet-page-cover" class="space-y-4">
+          <!-- 표지 카드 -->
+          <div class="rounded-3xl p-5 text-center bg-gradient-to-b from-amber-50 via-yellow-50 to-emerald-50 border-2 border-amber-300 shadow-sm relative overflow-hidden">
+            <span class="inline-block text-xs font-black text-amber-900 bg-amber-200/80 px-3 py-1 rounded-full">신흥여자중학교</span>
+            <div class="mt-2">
+              <span class="text-3xl font-black text-rose-700 tracking-tight block">27회</span>
+              <h4 class="text-2xl font-black bg-gradient-to-r from-amber-600 via-orange-600 to-emerald-600 bg-clip-text text-transparent mt-0.5">
+                은행꿈나무축제
+              </h4>
+              <p class="text-xs font-bold text-amber-800 mt-1">꿈을 키우고, 끼를 펼치는 우리들의 축제! 💛</p>
+            </div>
+
+            <div class="mt-3 inline-flex items-center gap-2 bg-white/90 border border-amber-300 px-4 py-2 rounded-2xl shadow-2xs">
+              <span class="text-base">📅</span>
+              <div class="text-left">
+                <p class="text-xs font-black text-slate-900">12월 1일 (화)</p>
+                <p class="text-[11px] font-bold text-rose-600">09:00 ~ 15:00</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5 mt-4 text-left">
+              <div class="bg-white/95 border border-amber-200 rounded-2xl p-3">
+                <span class="inline-block bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full">1부</span>
+                <p class="text-sm font-black text-slate-900 mt-1">전시 · 체험마당</p>
+                <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">꿈과 열정이 담긴 다양한 작품 전시 및 부스 체험</p>
+              </div>
+              <div class="bg-white/95 border border-rose-200 rounded-2xl p-3">
+                <span class="inline-block bg-rose-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full">2부</span>
+                <p class="text-sm font-black text-slate-900 mt-1">장기마당</p>
+                <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">끼와 재능을 빛내는 신나는 공연 무대 (웅비관)</p>
+              </div>
+            </div>
+            <p class="text-[11px] font-black text-slate-700 mt-3">🏫 신흥여자중학교</p>
+          </div>
+
+          <!-- 학교장 격려사 -->
+          <div class="bg-white border border-amber-200 rounded-2xl p-4 space-y-2 shadow-2xs">
+            <div class="flex items-center justify-between border-b border-amber-100 pb-2">
+              <h4 class="text-sm font-black text-amber-900">💐 학교장 격려사</h4>
+              <span class="text-[11px] font-black text-slate-600">신흥여자중학교장 최 재 영</span>
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed">
+              높고 푸른 가을 하늘 아래 학생들의 꿈과 재능이 빛나는 계절에 「2026 은행꿈나무축제」를 개최하게 되어 매우 뜻깊게 생각합니다. 오늘은 학생들이 한 해 동안 배우고 익히며 갈고닦은 노력과 열정의 결실을 함께 나누는 소중한 자리입니다. 무대 위에 펼쳐지는 공연마다 학생들의 꿈과 정성이 담겨 있으리라 생각합니다. 이번 축제가 서로의 재능을 존중하고 함께하는 기쁨을 나누며 오래도록 기억될 소중한 추억이 되기를 바랍니다. 축제를 위해 애써주신 선생님들과 학생 여러분 그리고 늘 아낌없는 사랑과 응원을 보내주시는 학부모님께 깊이 감사드립니다.
+            </p>
+          </div>
+
+          <!-- 모시는 글 -->
+          <div class="bg-white border border-amber-200 rounded-2xl p-4 space-y-2 shadow-2xs">
+            <div class="flex items-center justify-between border-b border-amber-100 pb-2">
+              <h4 class="text-sm font-black text-orange-800">💌 모시는 글</h4>
+              <span class="text-[11px] font-black text-slate-600">학생회장 이 소 연</span>
+            </div>
+            <p class="text-xs text-slate-700 leading-relaxed">
+              안녕하십니까?<br />
+              따스한 햇살과 함께 시작했던 한 해가 어느덧 깊어가는 계절을 맞이했습니다. 그동안 학교에서 꿈을 키우고 서로에게 소중한 추억을 쌓아 온 신흥여자중학교 학생들이 오늘, 저마다의 재능과 열정을 모아 특별한 축제를 준비했습니다. 학생들의 웃음과 설렘이 가득한 이 자리에 함께하시어 정성껏 준비한 공연과 다양한 활동을 즐겨 주시고, 따뜻한 박수와 격려로 학생들의 소중한 순간을 더욱 빛내 주시기 바랍니다. 여러분의 관심과 사랑이 더해져 오래도록 기억에 남는 축제가 되기를 바랍니다. 감사합니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- [면 2] 1부 체험마당 (교실) 1~26번 전체 안내표 -->
+        <div id="leaflet-page-part1" class="hidden space-y-2.5">
+          <div class="bg-amber-100/80 border border-amber-300 rounded-2xl px-3.5 py-2.5 flex items-center justify-between">
+            <span class="text-xs font-black text-amber-950">🎪 1부 체험마당 (교실) 전체 부스 안내</span>
+            <span class="text-[11px] font-black text-amber-800">총 26개 부스</span>
+          </div>
+          <div id="leaflet-part1-table" class="space-y-1.5"></div>
+        </div>
+
+        <!-- [면 3] 2부 공연마당 (웅비관) 1~15번 전체 식순표 -->
+        <div id="leaflet-page-part2" class="hidden space-y-2.5">
+          <div class="bg-orange-100/80 border border-orange-300 rounded-2xl px-3.5 py-2.5 flex items-center justify-between">
+            <span class="text-xs font-black text-orange-950">🎤 2부 공연마당 (웅비관) 전체 식순</span>
+            <span class="text-[11px] font-black text-orange-800">총 15팀</span>
+          </div>
+          <div id="leaflet-part2-table" class="space-y-1.5"></div>
+        </div>
+
+      </div>
+
+      <!-- 하단 닫기 버튼 -->
+      <div class="p-3 bg-white border-t border-amber-200 shrink-0">
+        <button type="button" onclick="closeModal('leaflet-modal')" class="w-full py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs">
+          리플렛 닫기
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div id="toast-banner" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white text-xs font-black px-5 py-3 rounded-full shadow-2xl border border-amber-400/50 text-center max-w-[90vw]"></div>
 
   <script>
@@ -1238,6 +1363,106 @@
 
     function closeModal(id) {
       document.getElementById(id)?.classList.add("hidden");
+    }
+
+    const LEAFLET_PART1_BOOTHS = [
+      { no: 1, title: "방탈출.exe 실행 중", teacher: "박소현", place: "3층 컴퓨터실" },
+      { no: 2, title: "위조지폐 비밀수사대", teacher: "천지은", place: "1층 제1과학실" },
+      { no: 3, title: "대사없이 마음을 전달한다고?", teacher: "신혜령", place: "2층 1-1 교실" },
+      { no: 4, title: "후끈후끈 찜질방", teacher: "박효희, 이윤희", place: "2층 1-3 교실" },
+      { no: 5, title: "행운이 긁적긁적", teacher: "현희정, 권희정, 김은영", place: "4층 수학실" },
+      { no: 6, title: "알코올 0% 칵테일바", teacher: "김연지", place: "2층 1-4 교실" },
+      { no: 7, title: "신점줴줴이야", teacher: "박성윤, 이민지", place: "2층 1-5 교실" },
+      { no: 8, title: "불맛의 올킬 (All Kill of fire)", teacher: "김혁곤, 김동혁", place: "3층 3-4 교실" },
+      { no: 9, title: "챗지피떡", teacher: "조래경", place: "1층 가사실" },
+      { no: 10, title: "노담 인형 만들기", teacher: "김남희", place: "4층 기술실" },
+      { no: 11, title: "비누~ 비누~ 솜아티스트 체험!", teacher: "이미숙", place: "3층 진로활동실" },
+      { no: 12, title: "보석같은 작품, 행운의 뽑기!", teacher: "조정효", place: "4층 미술실" },
+      { no: 13, title: "눈으로 보는 온도: MBL 그래프의 마법", teacher: "황경화", place: "1층 제2과학실" },
+      { no: 14, title: "컬러링아트 및 기술가정 작품 전시", teacher: "김태현", place: "4층 2-6 앞 복도" },
+      { no: 15, title: "아트 퀴즈 카페", teacher: "최미영", place: "3층 3-2 교실" },
+      { no: 16, title: "지훈 씨네마", teacher: "최종현", place: "3층 3-3 교실" },
+      { no: 19, title: "키링키링, 내 취향대로!", teacher: "편경양", place: "3층 3-6 교실" },
+      { no: 20, title: "반짝반짝 필사하기", teacher: "황제리", place: "1층 도서관" },
+      { no: 21, title: "말랑말랑 논리공작소", teacher: "김은희", place: "4층 2-2 교실" },
+      { no: 22, title: "리듬 맞추기", teacher: "황예지", place: "2층 음악실" },
+      { no: 23, title: "유령연습실", teacher: "제갈정연", place: "1층 스터디홀" },
+      { no: 24, title: "애플데이", teacher: "강윤심, 김민자", place: "4층 2-4 교실" },
+      { no: 25, title: "지구오락실 카페", teacher: "이푸름", place: "2층 1-6 교실" },
+      { no: 26, title: "니트공작소 전시회", teacher: "최수연", place: "3층 영어교실" }
+    ];
+
+    const LEAFLET_PART2_STAGE = [
+      { no: 1, team: "Opening 영상", song: "축제 오프닝 기념 영상", members: "교직원, 방송반" },
+      { no: 2, team: "쥬쥬티스", song: "붐붐붐, Bad", members: "송*아 외 6명" },
+      { no: 3, team: "셋업(SET UP)", song: "블러드파라다이스, 레드레드", members: "김*서 외 2명" },
+      { no: 4, team: "sea pearls", song: "한 페이지가 될 수 있게", members: "임*윤 외 1명" },
+      { no: 5, team: "7공듀", song: "사랑스러워, 뜨거운 안녕", members: "이*연 외 6명" },
+      { no: 6, team: "탁!마루킁", song: "첫인상, 진또배기", members: "탁*은 외 1명" },
+      { no: 7, team: "급발진 걸즈", song: "Bomba Radio mix", members: "김*희 외 3명" },
+      { no: 8, team: "이런 곳 언제 올라와보겠습니까", song: "마루노우치 새디스틱", members: "이*우 외 1명", breakAfter: true },
+      { no: 9, team: "올킬 칠공주", song: "내 얘길 들어봐", members: "박*연 외 6명" },
+      { no: 10, team: "Four스타 (포르스타)", song: "체포하겠어, shake it", members: "이*주 외 3명" },
+      { no: 11, team: "지플립 말고 킥플립", song: "처음 불러보는 노래", members: "노*린 외 5명" },
+      { no: 12, team: "트와이스", song: "치얼업", members: "이*니 외 4명" },
+      { no: 13, team: "선생님 잠시만요", song: "소년점프", members: "강*영 외 1명" },
+      { no: 14, team: "까칠한바나나", song: "바나나 알러지 원숭이, 까탈레나", members: "천*인 외 5명" },
+      { no: 15, team: "니케", song: "이케페, 텐미닛, 아사이, XXL, 오드투러브, 미셔, 환상동화, 데자부", members: "김*연 외 17명" }
+    ];
+
+    function openLeafletModal() {
+      renderLeafletTables();
+      switchLeafletTab("cover");
+      document.getElementById("leaflet-modal").classList.remove("hidden");
+    }
+
+    function switchLeafletTab(tab) {
+      ["cover", "part1", "part2"].forEach(k => {
+        const page = document.getElementById("leaflet-page-" + k);
+        const btn = document.getElementById("leaflet-tab-" + k);
+        const active = k === tab;
+        if (page) page.classList.toggle("hidden", !active);
+        if (btn) {
+          btn.className = active
+            ? "py-2 rounded-xl text-xs font-black bg-white text-amber-950 shadow-2xs transition"
+            : "py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition";
+        }
+      });
+    }
+
+    function renderLeafletTables() {
+      const p1Box = document.getElementById("leaflet-part1-table");
+      if (p1Box) {
+        p1Box.innerHTML = LEAFLET_PART1_BOOTHS.map(b => `
+          <div class="bg-white border border-amber-200 rounded-xl px-3 py-2.5 flex items-center justify-between gap-2 text-xs">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="w-6 h-6 rounded-lg bg-amber-500 text-white font-black text-[11px] flex items-center justify-center shrink-0">${b.no}</span>
+              <div class="min-w-0">
+                <p class="font-black text-slate-900 truncate">${b.title}</p>
+                <p class="text-[10px] font-bold text-slate-500">👩‍🏫 ${b.teacher}</p>
+              </div>
+            </div>
+            <span class="text-[11px] font-black text-amber-800 bg-amber-50 border border-amber-200 px-2 py-1 rounded-lg shrink-0">📍 ${b.place}</span>
+          </div>
+        `).join("");
+      }
+
+      const p2Box = document.getElementById("leaflet-part2-table");
+      if (p2Box) {
+        p2Box.innerHTML = LEAFLET_PART2_STAGE.map(s => `
+          <div class="bg-white border border-orange-200 rounded-xl px-3 py-2.5 text-xs space-y-1">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-6 h-6 rounded-lg bg-orange-500 text-white font-black text-[11px] flex items-center justify-center shrink-0">${s.no}</span>
+                <span class="font-black text-slate-900 truncate">${s.team}</span>
+              </div>
+              <span class="text-[10px] font-bold text-slate-500 shrink-0">👤 ${s.members}</span>
+            </div>
+            <p class="text-[11px] font-bold text-orange-700 pl-8">🎵 ${s.song}</p>
+          </div>
+          ${s.breakAfter ? `<div class="py-1.5 text-center text-[11px] font-black text-amber-900 bg-amber-100/90 border border-amber-300 rounded-xl">☕ 브레이크타임 (잠시 쉬어가는 시간)</div>` : ""}
+        `).join("");
+      }
     }
 
     let toastTimeout = null;
