@@ -896,11 +896,11 @@
     </div>
   </div>
 
-  <!-- ==================== 2026 제27회 은행꿈나무 축제 리플렛 뷰어 모달 ==================== -->
-  <div id="leaflet-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4" onclick="if(event.target===this) closeModal('leaflet-modal')">
-    <div class="bg-[#fffdf7] border-2 border-amber-300 rounded-3xl w-full max-w-md max-h-[90dvh] flex flex-col shadow-2xl overflow-hidden">
+  <!-- ==================== 2026 제27회 은행꿈나무 축제 리플렛 뷰어 모달 (원본 브로슈어 2면 그대로 표시 + 확대/축소) ==================== -->
+  <div id="leaflet-modal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4" onclick="if(event.target===this) closeModal('leaflet-modal')">
+    <div class="bg-[#fffdf7] border-2 border-amber-300 rounded-3xl w-full max-w-lg max-h-[92dvh] flex flex-col shadow-2xl overflow-hidden">
       <!-- 상단 헤더 -->
-      <div class="amber-hero-grad text-white px-4 py-3.5 flex items-center justify-between shrink-0">
+      <div class="amber-hero-grad text-white px-4 py-3 flex items-center justify-between shrink-0">
         <div>
           <span class="text-[10px] font-black bg-white/25 px-2.5 py-0.5 rounded-full">OFFICIAL BROCHURE</span>
           <h3 class="text-base font-black mt-0.5">🍂 제27회 은행꿈나무축제 리플렛</h3>
@@ -908,106 +908,59 @@
         <button type="button" onclick="closeModal('leaflet-modal')" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white font-black flex items-center justify-center">✕</button>
       </div>
 
-      <!-- 3면 전환 탭 (표지·인사말 / 1부 체험마당 / 2부 공연마당) -->
-      <div class="grid grid-cols-3 gap-1 bg-amber-100/90 p-1.5 border-b border-amber-200 shrink-0">
-        <button id="leaflet-tab-cover" onclick="switchLeafletTab('cover')" class="py-2 rounded-xl text-xs font-black bg-white text-amber-950 shadow-2xs transition">
-          📜 표지·격려사
-        </button>
-        <button id="leaflet-tab-part1" onclick="switchLeafletTab('part1')" class="py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition">
-          🎪 1부 체험마당
-        </button>
-        <button id="leaflet-tab-part2" onclick="switchLeafletTab('part2')" class="py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition">
-          🎤 2부 공연마당
-        </button>
+      <!-- 겉면(1) / 안쪽(2) 전환 탭 + 확대 배율 컨트롤 -->
+      <div class="bg-amber-100/90 px-3 py-2 border-b border-amber-200 flex items-center justify-between gap-2 shrink-0">
+        <div class="grid grid-cols-2 gap-1 flex-1 bg-amber-200/70 p-1 rounded-xl">
+          <button id="leaflet-tab-front" onclick="switchLeafletSide('front')" class="py-1.5 rounded-lg text-xs font-black bg-white text-amber-950 shadow-2xs transition">
+            📄 브로슈어 겉면(1)
+          </button>
+          <button id="leaflet-tab-inside" onclick="switchLeafletSide('inside')" class="py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-950 transition">
+            🎪 브로슈어 안쪽(2)
+          </button>
+        </div>
+
+        <div class="flex items-center gap-1 shrink-0 bg-white border border-amber-300 rounded-xl px-2 py-1">
+          <button type="button" onclick="adjustLeafletZoom(-0.25)" class="w-6 h-6 rounded-lg bg-amber-100 text-amber-950 font-black text-xs">－</button>
+          <span id="leaflet-zoom-label" class="text-[11px] font-black text-slate-800 w-9 text-center">100%</span>
+          <button type="button" onclick="adjustLeafletZoom(0.25)" class="w-6 h-6 rounded-lg bg-amber-100 text-amber-950 font-black text-xs">＋</button>
+        </div>
       </div>
 
-      <!-- 리플렛 본문 스크롤 영역 -->
-      <div class="flex-1 overflow-y-auto p-4 space-y-4 text-slate-800">
-
-        <!-- [면 1] 표지 + 학교장 격려사 + 모시는 글 -->
-        <div id="leaflet-page-cover" class="space-y-4">
-          <!-- 표지 카드 -->
-          <div class="rounded-3xl p-5 text-center bg-gradient-to-b from-amber-50 via-yellow-50 to-emerald-50 border-2 border-amber-300 shadow-sm relative overflow-hidden">
-            <span class="inline-block text-xs font-black text-amber-900 bg-amber-200/80 px-3 py-1 rounded-full">신흥여자중학교</span>
-            <div class="mt-2">
-              <span class="text-3xl font-black text-rose-700 tracking-tight block">27회</span>
-              <h4 class="text-2xl font-black bg-gradient-to-r from-amber-600 via-orange-600 to-emerald-600 bg-clip-text text-transparent mt-0.5">
-                은행꿈나무축제
-              </h4>
-              <p class="text-xs font-bold text-amber-800 mt-1">꿈을 키우고, 끼를 펼치는 우리들의 축제! 💛</p>
+      <!-- 원본 이미지 뷰어 (핀치 줌 및 가로·세로 드래그 스크롤 지원) -->
+      <div id="leaflet-scroll-container" class="flex-1 overflow-auto bg-slate-900/95 p-2 flex items-start justify-start">
+        <!-- 겉면(1): brochure1.jpg 원본 그대로 표시 -->
+        <div id="leaflet-img-wrap-front" class="min-w-full flex flex-col items-center">
+          <img id="leaflet-img-front" src="brochure1.jpg" alt="축제브로슈어 겉면(1)" onerror="handleLeafletImgError('front')" class="w-full h-auto rounded-xl shadow-lg transition-all duration-150 origin-top-left" />
+          <div id="leaflet-fallback-front" class="hidden w-full space-y-3 p-2 text-slate-800">
+            <div class="rounded-2xl p-4 text-center bg-gradient-to-b from-amber-50 via-yellow-50 to-emerald-50 border-2 border-amber-300">
+              <span class="inline-block text-xs font-black text-amber-900 bg-amber-200/80 px-3 py-0.5 rounded-full">신흥여자중학교</span>
+              <h4 class="text-2xl font-black text-rose-700 mt-1">27회 은행꿈나무축제</h4>
+              <p class="text-xs font-bold text-amber-800 mt-0.5">12월 1일 (화) 09:00 ~ 15:00 · 1부 전시마당 / 2부 장기마당</p>
             </div>
-
-            <div class="mt-3 inline-flex items-center gap-2 bg-white/90 border border-amber-300 px-4 py-2 rounded-2xl shadow-2xs">
-              <span class="text-base">📅</span>
-              <div class="text-left">
-                <p class="text-xs font-black text-slate-900">12월 1일 (화)</p>
-                <p class="text-[11px] font-bold text-rose-600">09:00 ~ 15:00</p>
-              </div>
+            <div class="bg-white border border-amber-200 rounded-2xl p-3.5 space-y-1.5">
+              <div class="flex justify-between text-xs font-black text-amber-900"><span>💐 학교장 격려사</span><span>신흥여자중학교장 최 재 영</span></div>
+              <p class="text-xs text-slate-700 leading-relaxed">높고 푸른 가을 하늘 아래 학생들의 꿈과 재능이 빛나는 계절에 「2026 은행꿈나무축제」를 개최하게 되어 매우 뜻깊게 생각합니다. 오늘은 학생들이 한 해 동안 배우고 익히며 갈고닦은 노력과 열정의 결실을 함께 나누는 소중한 자리입니다. 무대 위에 펼쳐지는 공연마다 학생들의 꿈과 정성이 담겨 있으리라 생각합니다. 이번 축제가 서로의 재능을 존중하고 함께하는 기쁨을 나누며 오래도록 기억될 소중한 추억이 되기를 바랍니다. 축제를 위해 애써주신 선생님들과 학생 여러분 그리고 늘 아낌없는 사랑과 응원을 보내주시는 학부모님께 깊이 감사드립니다.</p>
             </div>
-
-            <div class="grid grid-cols-2 gap-2.5 mt-4 text-left">
-              <div class="bg-white/95 border border-amber-200 rounded-2xl p-3">
-                <span class="inline-block bg-emerald-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full">1부</span>
-                <p class="text-sm font-black text-slate-900 mt-1">전시 · 체험마당</p>
-                <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">꿈과 열정이 담긴 다양한 작품 전시 및 부스 체험</p>
-              </div>
-              <div class="bg-white/95 border border-rose-200 rounded-2xl p-3">
-                <span class="inline-block bg-rose-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full">2부</span>
-                <p class="text-sm font-black text-slate-900 mt-1">장기마당</p>
-                <p class="text-[11px] text-slate-600 mt-0.5 leading-snug">끼와 재능을 빛내는 신나는 공연 무대 (웅비관)</p>
-              </div>
+            <div class="bg-white border border-amber-200 rounded-2xl p-3.5 space-y-1.5">
+              <div class="flex justify-between text-xs font-black text-orange-800"><span>💌 모시는 글</span><span>학생회장 이 소 연</span></div>
+              <p class="text-xs text-slate-700 leading-relaxed">안녕하십니까? 따스한 햇살과 함께 시작했던 한 해가 어느덧 깊어가는 계절을 맞이했습니다. 그동안 학교에서 꿈을 키우고 서로에게 소중한 추억을 쌓아 온 신흥여자중학교 학생들이 오늘, 저마다의 재능과 열정을 모아 특별한 축제를 준비했습니다. 학생들의 웃음과 설렘이 가득한 이 자리에 함께하시어 정성껏 준비한 공연과 다양한 활동을 즐겨 주시고, 따뜻한 박수와 격려로 학생들의 소중한 순간을 더욱 빛내 주시기 바랍니다. 여러분의 관심과 사랑이 더해져 오래도록 기억에 남는 축제가 되기를 바랍니다. 감사합니다.</p>
             </div>
-            <p class="text-[11px] font-black text-slate-700 mt-3">🏫 신흥여자중학교</p>
-          </div>
-
-          <!-- 학교장 격려사 -->
-          <div class="bg-white border border-amber-200 rounded-2xl p-4 space-y-2 shadow-2xs">
-            <div class="flex items-center justify-between border-b border-amber-100 pb-2">
-              <h4 class="text-sm font-black text-amber-900">💐 학교장 격려사</h4>
-              <span class="text-[11px] font-black text-slate-600">신흥여자중학교장 최 재 영</span>
-            </div>
-            <p class="text-xs text-slate-700 leading-relaxed">
-              높고 푸른 가을 하늘 아래 학생들의 꿈과 재능이 빛나는 계절에 「2026 은행꿈나무축제」를 개최하게 되어 매우 뜻깊게 생각합니다. 오늘은 학생들이 한 해 동안 배우고 익히며 갈고닦은 노력과 열정의 결실을 함께 나누는 소중한 자리입니다. 무대 위에 펼쳐지는 공연마다 학생들의 꿈과 정성이 담겨 있으리라 생각합니다. 이번 축제가 서로의 재능을 존중하고 함께하는 기쁨을 나누며 오래도록 기억될 소중한 추억이 되기를 바랍니다. 축제를 위해 애써주신 선생님들과 학생 여러분 그리고 늘 아낌없는 사랑과 응원을 보내주시는 학부모님께 깊이 감사드립니다.
-            </p>
-          </div>
-
-          <!-- 모시는 글 -->
-          <div class="bg-white border border-amber-200 rounded-2xl p-4 space-y-2 shadow-2xs">
-            <div class="flex items-center justify-between border-b border-amber-100 pb-2">
-              <h4 class="text-sm font-black text-orange-800">💌 모시는 글</h4>
-              <span class="text-[11px] font-black text-slate-600">학생회장 이 소 연</span>
-            </div>
-            <p class="text-xs text-slate-700 leading-relaxed">
-              안녕하십니까?<br />
-              따스한 햇살과 함께 시작했던 한 해가 어느덧 깊어가는 계절을 맞이했습니다. 그동안 학교에서 꿈을 키우고 서로에게 소중한 추억을 쌓아 온 신흥여자중학교 학생들이 오늘, 저마다의 재능과 열정을 모아 특별한 축제를 준비했습니다. 학생들의 웃음과 설렘이 가득한 이 자리에 함께하시어 정성껏 준비한 공연과 다양한 활동을 즐겨 주시고, 따뜻한 박수와 격려로 학생들의 소중한 순간을 더욱 빛내 주시기 바랍니다. 여러분의 관심과 사랑이 더해져 오래도록 기억에 남는 축제가 되기를 바랍니다. 감사합니다.
-            </p>
+            <div id="leaflet-fallback-stage-list" class="space-y-1.5"></div>
           </div>
         </div>
 
-        <!-- [면 2] 1부 체험마당 (교실) 1~26번 전체 안내표 -->
-        <div id="leaflet-page-part1" class="hidden space-y-2.5">
-          <div class="bg-amber-100/80 border border-amber-300 rounded-2xl px-3.5 py-2.5 flex items-center justify-between">
-            <span class="text-xs font-black text-amber-950">🎪 1부 체험마당 (교실) 전체 부스 안내</span>
-            <span class="text-[11px] font-black text-amber-800">총 26개 부스</span>
-          </div>
-          <div id="leaflet-part1-table" class="space-y-1.5"></div>
+        <!-- 안쪽(2): brochure2.jpg 원본 그대로 표시 -->
+        <div id="leaflet-img-wrap-inside" class="hidden min-w-full flex flex-col items-center">
+          <img id="leaflet-img-inside" src="brochure2.jpg" alt="축제브로슈어 안쪽(2)" onerror="handleLeafletImgError('inside')" class="w-full h-auto rounded-xl shadow-lg transition-all duration-150 origin-top-left" />
+          <div id="leaflet-fallback-inside" class="hidden w-full space-y-1.5 p-2 text-slate-800"></div>
         </div>
-
-        <!-- [면 3] 2부 공연마당 (웅비관) 1~15번 전체 식순표 -->
-        <div id="leaflet-page-part2" class="hidden space-y-2.5">
-          <div class="bg-orange-100/80 border border-orange-300 rounded-2xl px-3.5 py-2.5 flex items-center justify-between">
-            <span class="text-xs font-black text-orange-950">🎤 2부 공연마당 (웅비관) 전체 식순</span>
-            <span class="text-[11px] font-black text-orange-800">총 15팀</span>
-          </div>
-          <div id="leaflet-part2-table" class="space-y-1.5"></div>
-        </div>
-
       </div>
 
-      <!-- 하단 닫기 버튼 -->
-      <div class="p-3 bg-white border-t border-amber-200 shrink-0">
-        <button type="button" onclick="closeModal('leaflet-modal')" class="w-full py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs">
-          리플렛 닫기
+      <!-- 하단 안내 및 닫기 버튼 -->
+      <div class="px-4 py-2.5 bg-white border-t border-amber-200 flex items-center justify-between gap-2 shrink-0">
+        <span class="text-[11px] font-bold text-slate-500">💡 ＋/－ 버튼 또는 두 손가락으로 확대해서 보세요</span>
+        <button type="button" onclick="closeModal('leaflet-modal')" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs shrink-0">
+          닫기
         </button>
       </div>
     </div>
@@ -1371,7 +1324,7 @@
       { no: 3, title: "대사없이 마음을 전달한다고?", teacher: "신혜령", place: "2층 1-1 교실" },
       { no: 4, title: "후끈후끈 찜질방", teacher: "박효희, 이윤희", place: "2층 1-3 교실" },
       { no: 5, title: "행운이 긁적긁적", teacher: "현희정, 권희정, 김은영", place: "4층 수학실" },
-      { no: 6, title: "알코올 0% 칵테일바", teacher: "김연지", place: "2층 1-4 교실" },
+      { no: 6, title: "알코올 0% 칵테일 바", teacher: "김연지", place: "2층 1-4 교실" },
       { no: 7, title: "신점줴줴이야", teacher: "박성윤, 이민지", place: "2층 1-5 교실" },
       { no: 8, title: "불맛의 올킬 (All Kill of fire)", teacher: "김혁곤, 김동혁", place: "3층 3-4 교실" },
       { no: 9, title: "챗지피떡", teacher: "조래경", place: "1층 가사실" },
@@ -1382,6 +1335,8 @@
       { no: 14, title: "컬러링아트 및 기술가정 작품 전시", teacher: "김태현", place: "4층 2-6 앞 복도" },
       { no: 15, title: "아트 퀴즈 카페", teacher: "최미영", place: "3층 3-2 교실" },
       { no: 16, title: "지훈 씨네마", teacher: "최종현", place: "3층 3-3 교실" },
+      { no: 17, title: "타임슬립 팡!", teacher: "이다영", place: "3층 3-1교실" },
+      { no: 18, title: "알쓸신과 (알아두면 쓸데있는 신비한 과학실험)", teacher: "권하윤", place: "1층 제1과학실" },
       { no: 19, title: "키링키링, 내 취향대로!", teacher: "편경양", place: "3층 3-6 교실" },
       { no: 20, title: "반짝반짝 필사하기", teacher: "황제리", place: "1층 도서관" },
       { no: 21, title: "말랑말랑 논리공작소", teacher: "김은희", place: "4층 2-2 교실" },
@@ -1389,7 +1344,9 @@
       { no: 23, title: "유령연습실", teacher: "제갈정연", place: "1층 스터디홀" },
       { no: 24, title: "애플데이", teacher: "강윤심, 김민자", place: "4층 2-4 교실" },
       { no: 25, title: "지구오락실 카페", teacher: "이푸름", place: "2층 1-6 교실" },
-      { no: 26, title: "니트공작소 전시회", teacher: "최수연", place: "3층 영어교실" }
+      { no: 26, title: "니트공작소 전시회", teacher: "최수연", place: "3층 영어교실" },
+      { no: 27, title: "활 쏘러 올래?말래?", teacher: "김혁곤", place: "1층 양궁장" },
+      { no: 28, title: "보물을 찾아라", teacher: "이다영", place: "4층 학생자치실" }
     ];
 
     const LEAFLET_PART2_STAGE = [
@@ -1410,31 +1367,68 @@
       { no: 15, team: "니케", song: "이케페, 텐미닛, 아사이, XXL, 오드투러브, 미셔, 환상동화, 데자부", members: "김*연 외 17명" }
     ];
 
+    let leafletZoomScale = 1;
+
     function openLeafletModal() {
-      renderLeafletTables();
-      switchLeafletTab("cover");
+      leafletZoomScale = 1;
+      applyLeafletZoom();
+      renderLeafletFallbackTables();
+      switchLeafletSide("front");
       document.getElementById("leaflet-modal").classList.remove("hidden");
     }
 
-    function switchLeafletTab(tab) {
-      ["cover", "part1", "part2"].forEach(k => {
-        const page = document.getElementById("leaflet-page-" + k);
-        const btn = document.getElementById("leaflet-tab-" + k);
-        const active = k === tab;
-        if (page) page.classList.toggle("hidden", !active);
-        if (btn) {
-          btn.className = active
-            ? "py-2 rounded-xl text-xs font-black bg-white text-amber-950 shadow-2xs transition"
-            : "py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition";
+    function switchLeafletSide(side) {
+      const isFront = side === "front";
+      document.getElementById("leaflet-img-wrap-front")?.classList.toggle("hidden", !isFront);
+      document.getElementById("leaflet-img-wrap-inside")?.classList.toggle("hidden", isFront);
+
+      const btnFront = document.getElementById("leaflet-tab-front");
+      const btnInside = document.getElementById("leaflet-tab-inside");
+      if (btnFront) {
+        btnFront.className = isFront
+          ? "py-1.5 rounded-lg text-xs font-black bg-white text-amber-950 shadow-2xs transition"
+          : "py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-950 transition";
+      }
+      if (btnInside) {
+        btnInside.className = !isFront
+          ? "py-1.5 rounded-lg text-xs font-black bg-white text-amber-950 shadow-2xs transition"
+          : "py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-950 transition";
+      }
+      const sc = document.getElementById("leaflet-scroll-container");
+      if (sc) { sc.scrollTop = 0; sc.scrollLeft = 0; }
+    }
+
+    function adjustLeafletZoom(delta) {
+      leafletZoomScale = Math.max(1, Math.min(2.5, Number((leafletZoomScale + delta).toFixed(2))));
+      applyLeafletZoom();
+    }
+
+    function applyLeafletZoom() {
+      const pct = Math.round(leafletZoomScale * 100) + "%";
+      const lbl = document.getElementById("leaflet-zoom-label");
+      if (lbl) lbl.textContent = pct;
+
+      ["leaflet-img-front", "leaflet-img-inside"].forEach(id => {
+        const img = document.getElementById(id);
+        if (img) {
+          img.style.width = pct;
+          img.style.maxWidth = "none";
         }
       });
     }
 
-    function renderLeafletTables() {
-      const p1Box = document.getElementById("leaflet-part1-table");
-      if (p1Box) {
-        p1Box.innerHTML = LEAFLET_PART1_BOOTHS.map(b => `
-          <div class="bg-white border border-amber-200 rounded-xl px-3 py-2.5 flex items-center justify-between gap-2 text-xs">
+    function handleLeafletImgError(side) {
+      const img = document.getElementById("leaflet-img-" + side);
+      const fb = document.getElementById("leaflet-fallback-" + side);
+      if (img) img.classList.add("hidden");
+      if (fb) fb.classList.remove("hidden");
+    }
+
+    function renderLeafletFallbackTables() {
+      const insideBox = document.getElementById("leaflet-fallback-inside");
+      if (insideBox) {
+        insideBox.innerHTML = LEAFLET_PART1_BOOTHS.map(b => `
+          <div class="bg-white border border-amber-200 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-xs">
             <div class="flex items-center gap-2 min-w-0">
               <span class="w-6 h-6 rounded-lg bg-amber-500 text-white font-black text-[11px] flex items-center justify-center shrink-0">${b.no}</span>
               <div class="min-w-0">
@@ -1447,10 +1441,10 @@
         `).join("");
       }
 
-      const p2Box = document.getElementById("leaflet-part2-table");
-      if (p2Box) {
-        p2Box.innerHTML = LEAFLET_PART2_STAGE.map(s => `
-          <div class="bg-white border border-orange-200 rounded-xl px-3 py-2.5 text-xs space-y-1">
+      const stageBox = document.getElementById("leaflet-fallback-stage-list");
+      if (stageBox) {
+        stageBox.innerHTML = LEAFLET_PART2_STAGE.map(s => `
+          <div class="bg-white border border-orange-200 rounded-xl px-3 py-2 text-xs space-y-0.5">
             <div class="flex items-center justify-between gap-2">
               <div class="flex items-center gap-2 min-w-0">
                 <span class="w-6 h-6 rounded-lg bg-orange-500 text-white font-black text-[11px] flex items-center justify-center shrink-0">${s.no}</span>
@@ -1460,7 +1454,7 @@
             </div>
             <p class="text-[11px] font-bold text-orange-700 pl-8">🎵 ${s.song}</p>
           </div>
-          ${s.breakAfter ? `<div class="py-1.5 text-center text-[11px] font-black text-amber-900 bg-amber-100/90 border border-amber-300 rounded-xl">☕ 브레이크타임 (잠시 쉬어가는 시간)</div>` : ""}
+          ${s.breakAfter ? `<div class="py-1 text-center text-[11px] font-black text-amber-900 bg-amber-100 border border-amber-300 rounded-xl">☕ 브레이크타임</div>` : ""}
         `).join("");
       }
     }
