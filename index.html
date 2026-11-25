@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>2026 신흥여자중학교 은행꿈나무 축제</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -175,18 +175,16 @@
     <!-- ==================== VIEW 2: 축제 참여 안내 (GUIDE) ==================== -->
     <section id="view-guide" class="hidden view-section flex-1 flex flex-col justify-between p-5">
       <div class="space-y-4">
-        <div class="amber-hero-grad text-white rounded-3xl p-5 shadow-lg">
-          <div class="flex items-start justify-between gap-3">
-            <div>
-              <span class="text-[11px] font-black bg-white/25 px-3 py-0.5 rounded-full">FESTIVAL GUIDE</span>
-              <h2 class="text-xl font-black mt-2">은행꿈나무 축제 참여 안내</h2>
-              <p class="text-xs text-amber-100 mt-1">로그인 전 아래 참여 안내를 꼭 확인해 주세요!</p>
-            </div>
-            <button type="button" onclick="openLeafletModal()" class="shrink-0 bg-white text-amber-900 hover:bg-amber-50 active:scale-95 font-black text-xs px-3.5 py-2.5 rounded-2xl shadow-lg border border-amber-200 flex flex-col items-center justify-center gap-0.5 transition">
-              <span class="text-lg leading-none">📖</span>
-              <span>축제 리플렛</span>
-            </button>
+        <div class="amber-hero-grad text-white rounded-3xl p-5 shadow-lg flex items-center justify-between gap-3">
+          <div class="min-w-0">
+            <span class="text-[11px] font-black bg-white/25 px-3 py-0.5 rounded-full">FESTIVAL GUIDE</span>
+            <h2 class="text-lg sm:text-xl font-black mt-2 leading-snug">은행꿈나무 축제 참여 안내</h2>
+            <p class="text-xs text-amber-100 mt-1">로그인 전 아래 참여 안내를 꼭 확인해 주세요!</p>
           </div>
+          <button type="button" onclick="openLeafletModal()" class="shrink-0 bg-white hover:bg-amber-50 active:scale-95 text-amber-900 font-black text-xs px-3.5 py-3 rounded-2xl shadow-lg border-2 border-amber-200 flex flex-col items-center justify-center gap-0.5 transition">
+            <span class="text-lg leading-none">📖</span>
+            <span>축제 리플렛</span>
+          </button>
         </div>
 
         <div class="space-y-3">
@@ -297,7 +295,7 @@
           <label class="text-[11px] font-black text-slate-600 block mb-1">이름 (학반·번호 선택 시 자동 입력)</label>
           <input id="login-student-name" type="text" readonly placeholder="학년·반·번호를 선택하세요" class="w-full bg-amber-50/90 border border-amber-200 rounded-xl px-3.5 py-2.5 text-sm font-black text-slate-900 focus:outline-none" />
           <p id="student-pw-hint" class="text-[11px] text-amber-800 font-bold mt-1">
-            ※ 첫 로그인 시 입력한 숫자 4자리가 본인 비밀번호로 설정됩니다.
+            ※ 첫 로그인 시 오타 방지를 위해 숫자 4자리를 두 번 입력합니다.
           </p>
         </div>
 
@@ -586,7 +584,6 @@
               </div>
             </div>
 
-            <!-- 탭 전환: 학급별 실시간 요약판 vs 달성자 명단 상세 -->
             <div class="grid grid-cols-2 gap-1 bg-slate-100 p-1 rounded-xl">
               <button id="btn-achiever-tab-summary" onclick="switchAchieverSubTab('summary')" class="py-1.5 rounded-lg text-[11px] font-black bg-white text-amber-900 shadow-2xs transition">
                 📊 학년·반별 실시간 현황
@@ -596,13 +593,11 @@
               </button>
             </div>
 
-            <!-- [탭 1] 1, 2, 3학년 각 반(1~6반) 및 교직원·학부모 실시간 달성자 수 요약 보드 -->
             <div id="adm-achiever-summary-panel" class="space-y-2.5">
               <div id="adm-class-summary-grid" class="space-y-2"></div>
               <p class="text-[10px] text-slate-400 text-center">※ 각 학급 카드를 누르면 해당 반 달성자 명단을 바로 확인할 수 있습니다.</p>
             </div>
 
-            <!-- [탭 2] 달성자 명단 상세 필터 및 리스트 (개별 스탬프 초기화 지원) -->
             <div id="adm-achiever-list-panel" class="hidden space-y-2">
               <div class="grid grid-cols-2 gap-1.5 bg-amber-50/80 p-2 rounded-xl border border-amber-200">
                 <div>
@@ -789,7 +784,7 @@
 
   </div>
 
-  <!-- ==================== 전체화면 QR 일괄 인쇄 오버레이 (A4 한 줄 2개 대형 배치) ==================== -->
+  <!-- ==================== 전체화면 QR 일괄 인쇄 오버레이 ==================== -->
   <div id="qr-fullscreen-print-overlay" class="hidden fixed inset-0 z-[100] bg-white overflow-y-auto p-6">
     <div class="max-w-4xl mx-auto space-y-4">
       <div class="no-print-btn sticky top-0 bg-slate-900 text-white rounded-2xl p-4 flex flex-wrap items-center justify-between gap-2 shadow-xl">
@@ -854,6 +849,51 @@
     </div>
   </div>
 
+  <!-- ==================== 제27회 은행꿈나무 축제 공식 리플렛 모달 (원본 brochure1.png / brochure2.png + 핀치 줌) ==================== -->
+  <div id="leaflet-modal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xs flex flex-col" onclick="if(event.target===this) closeLeafletModal()">
+    <div class="bg-slate-900 text-white px-4 py-3 border-b border-amber-400/40 flex items-center justify-between gap-2 shrink-0">
+      <div class="min-w-0">
+        <span class="text-[10px] font-black text-amber-400 tracking-wider block">2026 SHINHUNG FESTIVAL BROCHURE</span>
+        <h3 class="text-sm font-black truncate">📖 제27회 은행꿈나무 축제 공식 리플렛</h3>
+      </div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button type="button" onclick="changeLeafletZoom(-0.3)" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-black text-sm">－</button>
+        <span id="leaflet-zoom-label" class="text-[11px] font-black text-amber-300 w-11 text-center">100%</span>
+        <button type="button" onclick="changeLeafletZoom(0.3)" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-black text-sm">＋</button>
+        <button type="button" onclick="closeLeafletModal()" class="w-8 h-8 rounded-full bg-rose-600 hover:bg-rose-500 text-white font-black ml-1">✕</button>
+      </div>
+    </div>
+
+    <div class="bg-slate-900/95 px-4 py-2 border-b border-slate-800 flex items-center justify-center gap-2 shrink-0">
+      <button type="button" id="btn-leaflet-side-front" onclick="switchLeafletSide('front')" class="flex-1 max-w-[180px] py-2 rounded-xl text-xs font-black bg-amber-500 text-slate-950 shadow transition">
+        📄 겉면 (인사말 · 2부 공연)
+      </button>
+      <button type="button" id="btn-leaflet-side-inside" onclick="switchLeafletSide('inside')" class="flex-1 max-w-[180px] py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition">
+        🎪 안쪽 (1부 체험 1~28번)
+      </button>
+    </div>
+
+    <div id="leaflet-scroll-container" class="flex-1 overflow-auto p-3">
+      <div id="leaflet-zoom-inner" class="mx-auto transition-all duration-150">
+        <!-- 1. 겉면 원본 이미지 (brochure1.png) -->
+        <div id="leaflet-pane-front" class="space-y-3">
+          <img id="leaflet-img-front" src="./brochure1.png" data-candidates="./brochure1.png|./brochure1.PNG|./brochure1.jpg|./brochure1.JPG" data-idx="0" onerror="tryNextLeafletImg('front')" alt="축제 브로슈어 겉면" class="w-full h-auto rounded-2xl shadow-2xl border border-amber-300/40 block bg-amber-50" />
+          <div id="leaflet-fallback-front" class="hidden bg-amber-50 text-slate-900 rounded-3xl p-4 text-center border-2 border-amber-300">
+            <p class="text-xs font-black text-rose-700">⚠️ GitHub 저장소에 <code>brochure1.png</code> 파일이 있는지 확인해 주세요.</p>
+          </div>
+        </div>
+
+        <!-- 2. 안쪽 원본 이미지 (brochure2.png) -->
+        <div id="leaflet-pane-inside" class="hidden space-y-3">
+          <img id="leaflet-img-inside" src="./brochure2.png" data-candidates="./brochure2.png|./brochure2.PNG|./brochure2.jpg|./brochure2.JPG" data-idx="0" onerror="tryNextLeafletImg('inside')" alt="축제 브로슈어 안쪽면" class="w-full h-auto rounded-2xl shadow-2xl border border-amber-300/40 block bg-amber-50" />
+          <div id="leaflet-fallback-inside" class="hidden bg-amber-50 text-slate-900 rounded-3xl p-4 text-center border-2 border-amber-300">
+            <p class="text-xs font-black text-rose-700">⚠️ GitHub 저장소에 <code>brochure2.png</code> 파일이 있는지 확인해 주세요.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== 2부 공연 / 교장선생님 인사말 상세 모달 ==================== -->
   <div id="team-modal" class="hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-4" onclick="if(event.target===this) closeModal('team-modal')">
     <div class="bg-white rounded-3xl w-full max-w-sm max-h-[90vh] overflow-y-auto p-5 shadow-2xl space-y-3">
@@ -896,76 +936,6 @@
     </div>
   </div>
 
-  <!-- ==================== 2026 제27회 은행꿈나무 축제 리플렛 뷰어 모달 (원본 브로슈어 2면 그대로 표시 + 확대/축소) ==================== -->
-  <div id="leaflet-modal" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4" onclick="if(event.target===this) closeModal('leaflet-modal')">
-    <div class="bg-[#fffdf7] border-2 border-amber-300 rounded-3xl w-full max-w-lg max-h-[92dvh] flex flex-col shadow-2xl overflow-hidden">
-      <!-- 상단 헤더 -->
-      <div class="amber-hero-grad text-white px-4 py-3 flex items-center justify-between shrink-0">
-        <div>
-          <span class="text-[10px] font-black bg-white/25 px-2.5 py-0.5 rounded-full">OFFICIAL BROCHURE</span>
-          <h3 class="text-base font-black mt-0.5">🍂 제27회 은행꿈나무축제 리플렛</h3>
-        </div>
-        <button type="button" onclick="closeModal('leaflet-modal')" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white font-black flex items-center justify-center">✕</button>
-      </div>
-
-      <!-- 겉면(1) / 안쪽(2) 전환 탭 + 확대 배율 컨트롤 -->
-      <div class="bg-amber-100/90 px-3 py-2 border-b border-amber-200 flex items-center justify-between gap-2 shrink-0">
-        <div class="grid grid-cols-2 gap-1 flex-1 bg-amber-200/70 p-1 rounded-xl">
-          <button id="leaflet-tab-front" onclick="switchLeafletSide('front')" class="py-1.5 rounded-lg text-xs font-black bg-white text-amber-950 shadow-2xs transition">
-            📄 브로슈어 겉면(1)
-          </button>
-          <button id="leaflet-tab-inside" onclick="switchLeafletSide('inside')" class="py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-950 transition">
-            🎪 브로슈어 안쪽(2)
-          </button>
-        </div>
-
-        <div class="flex items-center gap-1 shrink-0 bg-white border border-amber-300 rounded-xl px-2 py-1">
-          <button type="button" onclick="adjustLeafletZoom(-0.25)" class="w-6 h-6 rounded-lg bg-amber-100 text-amber-950 font-black text-xs">－</button>
-          <span id="leaflet-zoom-label" class="text-[11px] font-black text-slate-800 w-9 text-center">100%</span>
-          <button type="button" onclick="adjustLeafletZoom(0.25)" class="w-6 h-6 rounded-lg bg-amber-100 text-amber-950 font-black text-xs">＋</button>
-        </div>
-      </div>
-
-      <!-- 원본 이미지 뷰어 (핀치 줌 및 가로·세로 드래그 스크롤 지원) -->
-      <div id="leaflet-scroll-container" class="flex-1 overflow-auto bg-slate-900/95 p-2 flex items-start justify-start">
-        <!-- 겉면(1): brochure1.png 원본 이미지 그대로 표시 -->
-        <div id="leaflet-img-wrap-front" class="min-w-full flex flex-col items-center">
-          <img id="leaflet-img-front" src="./brochure1.png" data-candidates="./brochure1.png|./brochure1.PNG|./brochure1.jpg|./brochure1.JPG" data-idx="0" alt="제27회 은행꿈나무축제 브로슈어 겉면(1)" onerror="tryNextLeafletImg('front')" class="w-full h-auto rounded-xl shadow-lg transition-all duration-150 origin-top-left" />
-          <div id="leaflet-fallback-front" class="hidden w-full space-y-3 p-2 text-slate-800">
-            <div class="rounded-2xl p-4 text-center bg-gradient-to-b from-amber-50 via-yellow-50 to-emerald-50 border-2 border-amber-300">
-              <span class="inline-block text-xs font-black text-amber-900 bg-amber-200/80 px-3 py-0.5 rounded-full">신흥여자중학교</span>
-              <h4 class="text-2xl font-black text-rose-700 mt-1">27회 은행꿈나무축제</h4>
-              <p class="text-xs font-bold text-amber-800 mt-0.5">12월 1일 (화) 09:00 ~ 15:00 · 1부 전시마당 / 2부 장기마당</p>
-            </div>
-            <div class="bg-white border border-amber-200 rounded-2xl p-3.5 space-y-1.5">
-              <div class="flex justify-between text-xs font-black text-amber-900"><span>💐 학교장 격려사</span><span>신흥여자중학교장 최 재 영</span></div>
-              <p class="text-xs text-slate-700 leading-relaxed">높고 푸른 가을 하늘 아래 학생들의 꿈과 재능이 빛나는 계절에 「2026 은행꿈나무축제」를 개최하게 되어 매우 뜻깊게 생각합니다. 오늘은 학생들이 한 해 동안 배우고 익히며 갈고닦은 노력과 열정의 결실을 함께 나누는 소중한 자리입니다. 무대 위에 펼쳐지는 공연마다 학생들의 꿈과 정성이 담겨 있으리라 생각합니다. 이번 축제가 서로의 재능을 존중하고 함께하는 기쁨을 나누며 오래도록 기억될 소중한 추억이 되기를 바랍니다. 축제를 위해 애써주신 선생님들과 학생 여러분 그리고 늘 아낌없는 사랑과 응원을 보내주시는 학부모님께 깊이 감사드립니다.</p>
-            </div>
-            <div class="bg-white border border-amber-200 rounded-2xl p-3.5 space-y-1.5">
-              <div class="flex justify-between text-xs font-black text-orange-800"><span>💌 모시는 글</span><span>학생회장 이 소 연</span></div>
-              <p class="text-xs text-slate-700 leading-relaxed">안녕하십니까? 따스한 햇살과 함께 시작했던 한 해가 어느덧 깊어가는 계절을 맞이했습니다. 그동안 학교에서 꿈을 키우고 서로에게 소중한 추억을 쌓아 온 신흥여자중학교 학생들이 오늘, 저마다의 재능과 열정을 모아 특별한 축제를 준비했습니다. 학생들의 웃음과 설렘이 가득한 이 자리에 함께하시어 정성껏 준비한 공연과 다양한 활동을 즐겨 주시고, 따뜻한 박수와 격려로 학생들의 소중한 순간을 더욱 빛내 주시기 바랍니다. 여러분의 관심과 사랑이 더해져 오래도록 기억에 남는 축제가 되기를 바랍니다. 감사합니다.</p>
-            </div>
-            <div id="leaflet-fallback-stage-list" class="space-y-1.5"></div>
-          </div>
-        </div>
-
-        <!-- 안쪽(2): brochure2.png 원본 이미지 그대로 표시 -->
-        <div id="leaflet-img-wrap-inside" class="hidden min-w-full flex flex-col items-center">
-          <img id="leaflet-img-inside" src="./brochure2.png" data-candidates="./brochure2.png|./brochure2.PNG|./brochure2.jpg|./brochure2.JPG" data-idx="0" alt="제27회 은행꿈나무축제 브로슈어 안쪽(2)" onerror="tryNextLeafletImg('inside')" class="w-full h-auto rounded-xl shadow-lg transition-all duration-150 origin-top-left" />
-          <div id="leaflet-fallback-inside" class="hidden w-full space-y-1.5 p-2 text-slate-800"></div>
-        </div>
-      </div>
-
-      <!-- 하단 안내 및 닫기 버튼 -->
-      <div class="px-4 py-2.5 bg-white border-t border-amber-200 flex items-center justify-between gap-2 shrink-0">
-        <span class="text-[11px] font-bold text-slate-500">💡 ＋/－ 버튼 또는 두 손가락으로 확대해서 보세요</span>
-        <button type="button" onclick="closeModal('leaflet-modal')" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-black text-xs shrink-0">
-          닫기
-        </button>
-      </div>
-    </div>
-  </div>
-
   <div id="toast-banner" class="hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-slate-900/95 text-white text-xs font-black px-5 py-3 rounded-full shadow-2xl border border-amber-400/50 text-center max-w-[90vw]"></div>
 
   <script>
@@ -973,6 +943,189 @@
 
     function getGasUrl() {
       return (localStorage.getItem("sh_gas_web_app_url") || DEFAULT_GAS_WEB_APP_URL).trim();
+    }
+
+    const LEAFLET_PART1_BOOTHS = [
+      { no: 1, title: "방탈출.exe 실행 중", teacher: "박소현", place: "3층 컴퓨터실" },
+      { no: 2, title: "위조지폐 비밀수사대", teacher: "천지은", place: "1층 제1과학실" },
+      { no: 3, title: "대사없이 마음을 전달한다고?", teacher: "신혜령", place: "2층 1-1 교실" },
+      { no: 4, title: "후끈후끈 찜질방", teacher: "박효희, 이윤희", place: "2층 1-3 교실" },
+      { no: 5, title: "행운이 긁적긁적", teacher: "한희정, 권희정, 김은영", place: "4층 수학실" },
+      { no: 6, title: "알코올 0% 칵테일 바", teacher: "김연지", place: "2층 1-4 교실" },
+      { no: 7, title: "신점줴줴이야", teacher: "박성윤, 이민지", place: "2층 1-5 교실" },
+      { no: 8, title: "불맛의 올킬(All Kill of fire)", teacher: "김혁곤, 김동혁", place: "3층 3-4 교실" },
+      { no: 9, title: "챗지피떡", teacher: "조래경", place: "1층 가사실" },
+      { no: 10, title: "노담 인형 만들기", teacher: "김남희", place: "4층 기술실" },
+      { no: 11, title: "비누~ 비누~ 솝아티스트 체험!", teacher: "이미숙", place: "3층 진로활동실" },
+      { no: 12, title: "보석같은 작품, 행운의 뽑기!", teacher: "조정효", place: "4층 미술실" },
+      { no: 13, title: "눈으로 보는 온도: MBL 그래프의 마법", teacher: "황경화", place: "1층 제2과학실" },
+      { no: 14, title: "컬러링아트 및 기술가정 작품 전시", teacher: "김태현", place: "4층 2-6 앞 복도" },
+      { no: 15, title: "아트 퀴즈 카페", teacher: "최미영", place: "3층 3-2 교실" },
+      { no: 16, title: "지훈 씨네마", teacher: "최종현", place: "3층 3-3 교실" },
+      { no: 17, title: "타임슬립 팡!", teacher: "이다영", place: "3층 3-1 교실" },
+      { no: 18, title: "알쓸신과(알아두면 쓸데있는 신비한 과학실험)", teacher: "권하윤", place: "1층 제1과학실" },
+      { no: 19, title: "키링키링, 내 취향대로!", teacher: "편경양", place: "3층 3-6 교실" },
+      { no: 20, title: "반짝반짝 필사하기", teacher: "황제리", place: "1층 도서관" },
+      { no: 21, title: "말랑말랑 논리공작소", teacher: "김은희", place: "4층 2-2 교실" },
+      { no: 22, title: "리듬 맞추기", teacher: "황예지", place: "2층 음악실" },
+      { no: 23, title: "유령연습실", teacher: "제갈정연", place: "1층 스터디홀" },
+      { no: 24, title: "애플데이", teacher: "강윤심, 김민자", place: "4층 2-4 교실" },
+      { no: 25, title: "지구오락실 카페", teacher: "이푸름", place: "2층 1-6 교실" },
+      { no: 26, title: "니트공작소 전시회", teacher: "최수연", place: "3층 영어교실" },
+      { no: 27, title: "활 쏘러 올래?말래?", teacher: "김혁곤", place: "1층 양궁장" },
+      { no: 28, title: "보물을 찾아라", teacher: "이다영", place: "4층 학생자치실" }
+    ];
+
+    const LEAFLET_PART2_STAGE = [
+      { no: 1, team: "Opening 영상", song: "축제 오프닝 영상", members: "교직원, 방송반" },
+      { no: 2, team: "쥬쥬티스", song: "봄봄봄, Bad", members: "송*아 외 6명" },
+      { no: 3, team: "셋업(SET UP)", song: "블러드파라다이스, 레드레드", members: "김*서 외 2명" },
+      { no: 4, team: "sea pearls", song: "한 페이지가 될 수 있게", members: "임*윤 외 1명" },
+      { no: 5, team: "7공듀", song: "사랑스러워, 뜨거운 안녕", members: "이*연 외 6명" },
+      { no: 6, team: "탁!마루킁", song: "첫인상, 진또배기", members: "탁*은 외 1명" },
+      { no: 7, team: "급발진 걸즈", song: "Bomba Radio mix", members: "김*희 외 3명" },
+      { no: 8, team: "이런 곳 언제 올라와보겠습니까", song: "마루노우치 새디스틱", members: "이*우 외 1명" },
+      { no: 9, team: "올킬 칠공주", song: "내 얘길 들어봐", members: "박*연 외 6명" },
+      { no: 10, team: "Four스타 (포르스타)", song: "체포하겠어, shake it", members: "이*주 외 3명" },
+      { no: 11, team: "지플립 말고 킥플립", song: "처음 불러보는 노래", members: "노*린 외 5명" },
+      { no: 12, team: "트와이스", song: "치얼업", members: "이*니 외 4명" },
+      { no: 13, team: "선생님 잠시만요", song: "소년점프", members: "강*영 외 1명" },
+      { no: 14, team: "까칠한바나나", song: "바나나 알러지 원숭이, 까탈레나", members: "천*인 외 5명" },
+      { no: 15, team: "니케", song: "이케페, 텐미닛, 아사이, XXL, 오드투러브, 미셔, 환상동화, 데자부", members: "김*연 외 17명" }
+    ];
+
+    let leafletZoomScale = 1;
+    let leafletPinchStartDist = 0;
+    let leafletPinchStartScale = 1;
+
+    function renderLeafletFallbackTables() {
+      const stageBox = document.getElementById("leaflet-fallback-stage-list");
+      if (stageBox && !stageBox.dataset.rendered) {
+        stageBox.dataset.rendered = "1";
+        stageBox.innerHTML = `<div class="text-xs font-black text-amber-900 pt-1">🎤 2부 공연마당 (웅비관)</div>` +
+          LEAFLET_PART2_STAGE.map(item => `
+            <div class="bg-white border border-amber-200 rounded-xl px-3 py-2 text-xs flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <span class="font-black text-orange-600 mr-1">${item.no}.</span>
+                <span class="font-black text-slate-900">${item.team}</span>
+                <span class="text-[11px] text-slate-500 block truncate">${item.song}</span>
+              </div>
+              <span class="text-[11px] font-bold text-slate-600 shrink-0">${item.members}</span>
+            </div>
+          `).join("");
+      }
+
+      const insideBox = document.getElementById("leaflet-fallback-inside");
+      if (insideBox && !insideBox.dataset.rendered) {
+        insideBox.dataset.rendered = "1";
+        insideBox.innerHTML = `<div class="text-xs font-black text-amber-200 px-1 pb-1">🎪 1부 체험마당 (교실 · 1~28번 부스 안내)</div>` +
+          LEAFLET_PART1_BOOTHS.map(b => `
+            <div class="bg-white border border-amber-200 rounded-xl px-3 py-2 text-xs flex items-center justify-between gap-2">
+              <div class="min-w-0">
+                <span class="font-black text-amber-700 mr-1">#${b.no}</span>
+                <span class="font-black text-slate-900">${b.title}</span>
+                <span class="text-[11px] text-slate-500 block">담당교사: ${b.teacher}</span>
+              </div>
+              <span class="text-[11px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg shrink-0">${b.place}</span>
+            </div>
+          `).join("");
+      }
+    }
+
+    function tryNextLeafletImg(side) {
+      const img = document.getElementById("leaflet-img-" + side);
+      const fallback = document.getElementById("leaflet-fallback-" + side);
+      if (!img) return;
+
+      const list = (img.dataset.candidates || "").split("|").filter(Boolean);
+      const nextIdx = Number(img.dataset.idx || 0) + 1;
+      if (nextIdx < list.length) {
+        img.dataset.idx = String(nextIdx);
+        img.src = list[nextIdx];
+      } else {
+        img.classList.add("hidden");
+        if (fallback) fallback.classList.remove("hidden");
+      }
+    }
+
+    function openLeafletModal() {
+      leafletZoomScale = 1;
+      renderLeafletFallbackTables();
+      switchLeafletSide("front");
+      document.getElementById("leaflet-modal").classList.remove("hidden");
+      requestAnimationFrame(() => applyLeafletZoom());
+      bindLeafletPinchZoom();
+    }
+
+    function closeLeafletModal() {
+      document.getElementById("leaflet-modal").classList.add("hidden");
+    }
+
+    function switchLeafletSide(side) {
+      const isFront = side === "front";
+      document.getElementById("leaflet-pane-front").classList.toggle("hidden", !isFront);
+      document.getElementById("leaflet-pane-inside").classList.toggle("hidden", isFront);
+      document.getElementById("btn-leaflet-side-front").className = isFront
+        ? "flex-1 max-w-[180px] py-2 rounded-xl text-xs font-black bg-amber-500 text-slate-950 shadow transition"
+        : "flex-1 max-w-[180px] py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition";
+      document.getElementById("btn-leaflet-side-inside").className = !isFront
+        ? "flex-1 max-w-[180px] py-2 rounded-xl text-xs font-black bg-amber-500 text-slate-950 shadow transition"
+        : "flex-1 max-w-[180px] py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition";
+      const scroller = document.getElementById("leaflet-scroll-container");
+      if (scroller) {
+        scroller.scrollTop = 0;
+        scroller.scrollLeft = 0;
+      }
+      applyLeafletZoom();
+    }
+
+    function changeLeafletZoom(delta) {
+      leafletZoomScale = Math.max(1, Math.min(3.5, Math.round((leafletZoomScale + delta) * 100) / 100));
+      applyLeafletZoom();
+    }
+
+    function applyLeafletZoom() {
+      const inner = document.getElementById("leaflet-zoom-inner");
+      const scroller = document.getElementById("leaflet-scroll-container");
+      const label = document.getElementById("leaflet-zoom-label");
+      if (!inner || !scroller) return;
+
+      const baseW = Math.max(300, Math.min(760, scroller.clientWidth - 24));
+      if (leafletZoomScale <= 1.01) {
+        inner.style.width = "100%";
+        inner.style.maxWidth = "48rem";
+      } else {
+        inner.style.maxWidth = "none";
+        inner.style.width = Math.round(baseW * leafletZoomScale) + "px";
+      }
+      if (label) label.textContent = Math.round(leafletZoomScale * 100) + "%";
+    }
+
+    function bindLeafletPinchZoom() {
+      const scroller = document.getElementById("leaflet-scroll-container");
+      if (!scroller || scroller.dataset.pinchBound) return;
+      scroller.dataset.pinchBound = "1";
+
+      scroller.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 2) {
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          leafletPinchStartDist = Math.hypot(dx, dy);
+          leafletPinchStartScale = leafletZoomScale;
+        }
+      }, { passive: true });
+
+      scroller.addEventListener("touchmove", (e) => {
+        if (e.touches.length === 2 && leafletPinchStartDist > 10) {
+          e.preventDefault();
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const dist = Math.hypot(dx, dy);
+          const nextScale = leafletPinchStartScale * (dist / leafletPinchStartDist);
+          leafletZoomScale = Math.max(1, Math.min(3.5, Math.round(nextScale * 100) / 100));
+          applyLeafletZoom();
+        }
+      }, { passive: false });
     }
 
     const RAW_ROSTER_BY_CLASS = {
@@ -996,7 +1149,6 @@
       "3-6": ["강선영","김나정","김다연","김단아","김사랑","김연서","김은빈","문지민","배희수","서옥현","유연희","윤다은","이다현","이마루","이서유","이세형","이지민","이지현","전소윤","조서율","지수지","지연아","진소연","천지인","최아정","TOLIBZODA MADINA"]
     };
 
-    /* 신흥여중 교직원 명단 (1번~50번) */
     const DEFAULT_STAFF_ROSTER = [
       { position: "교장", name: "최재영" },
       { position: "교감", name: "이은영" },
@@ -1318,152 +1470,6 @@
       document.getElementById(id)?.classList.add("hidden");
     }
 
-    const LEAFLET_PART1_BOOTHS = [
-      { no: 1, title: "방탈출.exe 실행 중", teacher: "박소현", place: "3층 컴퓨터실" },
-      { no: 2, title: "위조지폐 비밀수사대", teacher: "천지은", place: "1층 제1과학실" },
-      { no: 3, title: "대사없이 마음을 전달한다고?", teacher: "신혜령", place: "2층 1-1 교실" },
-      { no: 4, title: "후끈후끈 찜질방", teacher: "박효희, 이윤희", place: "2층 1-3 교실" },
-      { no: 5, title: "행운이 긁적긁적", teacher: "현희정, 권희정, 김은영", place: "4층 수학실" },
-      { no: 6, title: "알코올 0% 칵테일 바", teacher: "김연지", place: "2층 1-4 교실" },
-      { no: 7, title: "신점줴줴이야", teacher: "박성윤, 이민지", place: "2층 1-5 교실" },
-      { no: 8, title: "불맛의 올킬 (All Kill of fire)", teacher: "김혁곤, 김동혁", place: "3층 3-4 교실" },
-      { no: 9, title: "챗지피떡", teacher: "조래경", place: "1층 가사실" },
-      { no: 10, title: "노담 인형 만들기", teacher: "김남희", place: "4층 기술실" },
-      { no: 11, title: "비누~ 비누~ 솜아티스트 체험!", teacher: "이미숙", place: "3층 진로활동실" },
-      { no: 12, title: "보석같은 작품, 행운의 뽑기!", teacher: "조정효", place: "4층 미술실" },
-      { no: 13, title: "눈으로 보는 온도: MBL 그래프의 마법", teacher: "황경화", place: "1층 제2과학실" },
-      { no: 14, title: "컬러링아트 및 기술가정 작품 전시", teacher: "김태현", place: "4층 2-6 앞 복도" },
-      { no: 15, title: "아트 퀴즈 카페", teacher: "최미영", place: "3층 3-2 교실" },
-      { no: 16, title: "지훈 씨네마", teacher: "최종현", place: "3층 3-3 교실" },
-      { no: 17, title: "타임슬립 팡!", teacher: "이다영", place: "3층 3-1교실" },
-      { no: 18, title: "알쓸신과 (알아두면 쓸데있는 신비한 과학실험)", teacher: "권하윤", place: "1층 제1과학실" },
-      { no: 19, title: "키링키링, 내 취향대로!", teacher: "편경양", place: "3층 3-6 교실" },
-      { no: 20, title: "반짝반짝 필사하기", teacher: "황제리", place: "1층 도서관" },
-      { no: 21, title: "말랑말랑 논리공작소", teacher: "김은희", place: "4층 2-2 교실" },
-      { no: 22, title: "리듬 맞추기", teacher: "황예지", place: "2층 음악실" },
-      { no: 23, title: "유령연습실", teacher: "제갈정연", place: "1층 스터디홀" },
-      { no: 24, title: "애플데이", teacher: "강윤심, 김민자", place: "4층 2-4 교실" },
-      { no: 25, title: "지구오락실 카페", teacher: "이푸름", place: "2층 1-6 교실" },
-      { no: 26, title: "니트공작소 전시회", teacher: "최수연", place: "3층 영어교실" },
-      { no: 27, title: "활 쏘러 올래?말래?", teacher: "김혁곤", place: "1층 양궁장" },
-      { no: 28, title: "보물을 찾아라", teacher: "이다영", place: "4층 학생자치실" }
-    ];
-
-    const LEAFLET_PART2_STAGE = [
-      { no: 1, team: "Opening 영상", song: "축제 오프닝 기념 영상", members: "교직원, 방송반" },
-      { no: 2, team: "쥬쥬티스", song: "붐붐붐, Bad", members: "송*아 외 6명" },
-      { no: 3, team: "셋업(SET UP)", song: "블러드파라다이스, 레드레드", members: "김*서 외 2명" },
-      { no: 4, team: "sea pearls", song: "한 페이지가 될 수 있게", members: "임*윤 외 1명" },
-      { no: 5, team: "7공듀", song: "사랑스러워, 뜨거운 안녕", members: "이*연 외 6명" },
-      { no: 6, team: "탁!마루킁", song: "첫인상, 진또배기", members: "탁*은 외 1명" },
-      { no: 7, team: "급발진 걸즈", song: "Bomba Radio mix", members: "김*희 외 3명" },
-      { no: 8, team: "이런 곳 언제 올라와보겠습니까", song: "마루노우치 새디스틱", members: "이*우 외 1명", breakAfter: true },
-      { no: 9, team: "올킬 칠공주", song: "내 얘길 들어봐", members: "박*연 외 6명" },
-      { no: 10, team: "Four스타 (포르스타)", song: "체포하겠어, shake it", members: "이*주 외 3명" },
-      { no: 11, team: "지플립 말고 킥플립", song: "처음 불러보는 노래", members: "노*린 외 5명" },
-      { no: 12, team: "트와이스", song: "치얼업", members: "이*니 외 4명" },
-      { no: 13, team: "선생님 잠시만요", song: "소년점프", members: "강*영 외 1명" },
-      { no: 14, team: "까칠한바나나", song: "바나나 알러지 원숭이, 까탈레나", members: "천*인 외 5명" },
-      { no: 15, team: "니케", song: "이케페, 텐미닛, 아사이, XXL, 오드투러브, 미셔, 환상동화, 데자부", members: "김*연 외 17명" }
-    ];
-
-    let leafletZoomScale = 1;
-
-    function openLeafletModal() {
-      leafletZoomScale = 1;
-      applyLeafletZoom();
-      renderLeafletFallbackTables();
-      switchLeafletSide("front");
-      document.getElementById("leaflet-modal").classList.remove("hidden");
-    }
-
-    function switchLeafletSide(side) {
-      const isFront = side === "front";
-      document.getElementById("leaflet-img-wrap-front")?.classList.toggle("hidden", !isFront);
-      document.getElementById("leaflet-img-wrap-inside")?.classList.toggle("hidden", isFront);
-
-      const btnFront = document.getElementById("leaflet-tab-front");
-      const btnInside = document.getElementById("leaflet-tab-inside");
-      if (btnFront) {
-        btnFront.className = isFront
-          ? "py-1.5 rounded-lg text-xs font-black bg-white text-amber-950 shadow-2xs transition"
-          : "py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-950 transition";
-      }
-      if (btnInside) {
-        btnInside.className = !isFront
-          ? "py-1.5 rounded-lg text-xs font-black bg-white text-amber-950 shadow-2xs transition"
-          : "py-1.5 rounded-lg text-xs font-bold text-slate-700 hover:text-slate-950 transition";
-      }
-      const sc = document.getElementById("leaflet-scroll-container");
-      if (sc) { sc.scrollTop = 0; sc.scrollLeft = 0; }
-    }
-
-    function adjustLeafletZoom(delta) {
-      leafletZoomScale = Math.max(1, Math.min(2.5, Number((leafletZoomScale + delta).toFixed(2))));
-      applyLeafletZoom();
-    }
-
-    function applyLeafletZoom() {
-      const pct = Math.round(leafletZoomScale * 100) + "%";
-      const lbl = document.getElementById("leaflet-zoom-label");
-      if (lbl) lbl.textContent = pct;
-
-      ["leaflet-img-front", "leaflet-img-inside"].forEach(id => {
-        const img = document.getElementById(id);
-        if (img) img.style.width = pct;
-      });
-    }
-
-    function tryNextLeafletImg(side) {
-      const img = document.getElementById("leaflet-img-" + side);
-      const fb = document.getElementById("leaflet-fallback-" + side);
-      if (!img) return;
-      const list = (img.dataset.candidates || "").split("|").filter(Boolean);
-      const nextIdx = Number(img.dataset.idx || 0) + 1;
-      if (nextIdx < list.length) {
-        img.dataset.idx = String(nextIdx);
-        img.src = list[nextIdx];
-      } else {
-        img.classList.add("hidden");
-        if (fb) fb.classList.remove("hidden");
-      }
-    }
-
-    function renderLeafletFallbackTables() {
-      const insideBox = document.getElementById("leaflet-fallback-inside");
-      if (insideBox) {
-        insideBox.innerHTML = LEAFLET_PART1_BOOTHS.map(b => `
-          <div class="bg-white border border-amber-200 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-xs">
-            <div class="flex items-center gap-2 min-w-0">
-              <span class="w-6 h-6 rounded-lg bg-amber-500 text-white font-black text-[11px] flex items-center justify-center shrink-0">${b.no}</span>
-              <div class="min-w-0">
-                <p class="font-black text-slate-900 truncate">${b.title}</p>
-                <p class="text-[10px] font-bold text-slate-500">👩‍🏫 ${b.teacher}</p>
-              </div>
-            </div>
-            <span class="text-[11px] font-black text-amber-800 bg-amber-50 border border-amber-200 px-2 py-1 rounded-lg shrink-0">📍 ${b.place}</span>
-          </div>
-        `).join("");
-      }
-
-      const stageBox = document.getElementById("leaflet-fallback-stage-list");
-      if (stageBox) {
-        stageBox.innerHTML = LEAFLET_PART2_STAGE.map(s => `
-          <div class="bg-white border border-orange-200 rounded-xl px-3 py-2 text-xs space-y-0.5">
-            <div class="flex items-center justify-between gap-2">
-              <div class="flex items-center gap-2 min-w-0">
-                <span class="w-6 h-6 rounded-lg bg-orange-500 text-white font-black text-[11px] flex items-center justify-center shrink-0">${s.no}</span>
-                <span class="font-black text-slate-900 truncate">${s.team}</span>
-              </div>
-              <span class="text-[10px] font-bold text-slate-500 shrink-0">👤 ${s.members}</span>
-            </div>
-            <p class="text-[11px] font-bold text-orange-700 pl-8">🎵 ${s.song}</p>
-          </div>
-          ${s.breakAfter ? `<div class="py-1 text-center text-[11px] font-black text-amber-900 bg-amber-100 border border-amber-300 rounded-xl">☕ 브레이크타임</div>` : ""}
-        `).join("");
-      }
-    }
-
     let toastTimeout = null;
     function showToast(msg) {
       const el = document.getElementById("toast-banner");
@@ -1552,7 +1558,6 @@
 
     async function processScannedBoothCode(rawText) {
       const cleaned = String(rawText || "").trim().toUpperCase();
-      // 오직 우리 축제 부스 전용 QR 코드 형식(BOOTH_01 ~ BOOTH_28)만 허용 (일반 URL/바코드 숫자 오인식 차단)
       const match = cleaned.match(/^BOOTH_(\d{1,2})$/);
       if (!match) {
         const preview = cleaned.length > 24 ? cleaned.slice(0, 24) + "..." : cleaned;
@@ -2625,7 +2630,6 @@
       }
     }
 
-    /* A4 용지 한 줄에 2개씩 크게 들어가는 인쇄 레이아웃 */
     function printAllBoothsQrCodes() {
       const itemsData = AppState.booths.map(b => {
         const container = document.getElementById(`batch-qr-item-${b.id}`);
