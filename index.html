@@ -928,9 +928,9 @@
 
       <!-- 원본 이미지 뷰어 (핀치 줌 및 가로·세로 드래그 스크롤 지원) -->
       <div id="leaflet-scroll-container" class="flex-1 overflow-auto bg-slate-900/95 p-2 flex items-start justify-start">
-        <!-- 겉면(1): brochure1.jpg 원본 그대로 표시 -->
+        <!-- 겉면(1): brochure1.png 원본 이미지 그대로 표시 -->
         <div id="leaflet-img-wrap-front" class="min-w-full flex flex-col items-center">
-          <img id="leaflet-img-front" src="brochure1.jpg" alt="축제브로슈어 겉면(1)" onerror="handleLeafletImgError('front')" class="w-full h-auto rounded-xl shadow-lg transition-all duration-150 origin-top-left" />
+          <img id="leaflet-img-front" src="./brochure1.png" data-candidates="./brochure1.png|./brochure1.PNG|./brochure1.jpg|./brochure1.JPG" data-idx="0" alt="제27회 은행꿈나무축제 브로슈어 겉면(1)" onerror="tryNextLeafletImg('front')" class="w-full h-auto rounded-xl shadow-lg transition-all duration-150 origin-top-left" />
           <div id="leaflet-fallback-front" class="hidden w-full space-y-3 p-2 text-slate-800">
             <div class="rounded-2xl p-4 text-center bg-gradient-to-b from-amber-50 via-yellow-50 to-emerald-50 border-2 border-amber-300">
               <span class="inline-block text-xs font-black text-amber-900 bg-amber-200/80 px-3 py-0.5 rounded-full">신흥여자중학교</span>
@@ -949,9 +949,9 @@
           </div>
         </div>
 
-        <!-- 안쪽(2): brochure2.jpg 원본 그대로 표시 -->
+        <!-- 안쪽(2): brochure2.png 원본 이미지 그대로 표시 -->
         <div id="leaflet-img-wrap-inside" class="hidden min-w-full flex flex-col items-center">
-          <img id="leaflet-img-inside" src="brochure2.jpg" alt="축제브로슈어 안쪽(2)" onerror="handleLeafletImgError('inside')" class="w-full h-auto rounded-xl shadow-lg transition-all duration-150 origin-top-left" />
+          <img id="leaflet-img-inside" src="./brochure2.png" data-candidates="./brochure2.png|./brochure2.PNG|./brochure2.jpg|./brochure2.JPG" data-idx="0" alt="제27회 은행꿈나무축제 브로슈어 안쪽(2)" onerror="tryNextLeafletImg('inside')" class="w-full h-auto rounded-xl shadow-lg transition-all duration-150 origin-top-left" />
           <div id="leaflet-fallback-inside" class="hidden w-full space-y-1.5 p-2 text-slate-800"></div>
         </div>
       </div>
@@ -1410,18 +1410,23 @@
 
       ["leaflet-img-front", "leaflet-img-inside"].forEach(id => {
         const img = document.getElementById(id);
-        if (img) {
-          img.style.width = pct;
-          img.style.maxWidth = "none";
-        }
+        if (img) img.style.width = pct;
       });
     }
 
-    function handleLeafletImgError(side) {
+    function tryNextLeafletImg(side) {
       const img = document.getElementById("leaflet-img-" + side);
       const fb = document.getElementById("leaflet-fallback-" + side);
-      if (img) img.classList.add("hidden");
-      if (fb) fb.classList.remove("hidden");
+      if (!img) return;
+      const list = (img.dataset.candidates || "").split("|").filter(Boolean);
+      const nextIdx = Number(img.dataset.idx || 0) + 1;
+      if (nextIdx < list.length) {
+        img.dataset.idx = String(nextIdx);
+        img.src = list[nextIdx];
+      } else {
+        img.classList.add("hidden");
+        if (fb) fb.classList.remove("hidden");
+      }
     }
 
     function renderLeafletFallbackTables() {
