@@ -496,6 +496,18 @@
           </div>
           <span class="text-xl shrink-0">🎬</span>
         </div>
+
+        <button onclick="openSpecialModal('mc')" class="w-full text-left bg-gradient-to-r from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 border border-purple-300 rounded-2xl p-4 shadow-2xs transition flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <span class="w-11 h-11 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-500 text-white font-black text-xs flex items-center justify-center shrink-0">사회자</span>
+            <div>
+              <span class="text-[10px] font-black text-purple-700">FESTIVAL HOST · MC</span>
+              <h3 id="p2-mc-title" class="text-sm font-black text-slate-900">2026 은행꿈나무 축제 사회자</h3>
+              <p id="p2-mc-subtitle" class="text-[11px] text-slate-500">터치하여 축제 사회자 프로필 보기</p>
+            </div>
+          </div>
+          <span class="text-purple-700 font-black text-xs shrink-0">보기 →</span>
+        </button>
       </div>
 
       <div>
@@ -756,21 +768,22 @@
             </div>
           </div>
 
-          <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2.5">
+          <div class="bg-white border border-purple-200 rounded-2xl p-4 space-y-2">
             <div class="flex items-center justify-between">
-              <h4 class="text-xs font-black text-slate-800">🎤 학생 공연 14팀 정보 및 사진 관리</h4>
-              <button onclick="saveAllTeamsAdmin()" class="bg-slate-900 text-white text-[11px] font-black px-3 py-1.5 rounded-xl">전체 저장</button>
+              <h4 class="text-xs font-black text-purple-900">🎤 2026 은행꿈나무 축제 사회자 설정</h4>
+              <button onclick="saveAllTeamsAdmin()" class="bg-purple-600 text-white text-[11px] font-black px-3 py-1.5 rounded-xl">전체 저장</button>
             </div>
-            <div id="adm-teams-editor-list" class="space-y-3 max-h-96 overflow-y-auto pr-1"></div>
-          </div>
-        </div>
-
-        <div id="adm-sub2-view-passwords" class="hidden space-y-3">
-          <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2">
-            <h4 class="text-xs font-black text-slate-800">🛡️ 총괄 운영본부 마스터 비밀번호 변경</h4>
-            <div class="flex gap-2">
-              <input id="adm-master-pw-input" type="text" placeholder="새 총괄본부 비밀번호 (기본: admin2026)" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold" />
-              <button onclick="saveAdminMasterPasscode()" class="bg-slate-900 text-white text-xs font-black px-4 py-2 rounded-xl">변경</button>
+            <input id="adm-mc-names" type="text" placeholder="사회자 이름 (예: 3-1 김신흥, 3-2 이은행)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold" />
+            <textarea id="adm-mc-message" rows="2" placeholder="사회자 한마디 또는 소개 문구를 입력하세요" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs"></textarea>
+            <div class="flex items-center gap-2">
+              <img id="adm-mc-preview" src="" alt="" class="hidden w-12 h-12 rounded-xl object-cover border border-slate-200" />
+              <label class="cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] px-3 py-1.5 rounded-xl">
+                📷 사회자 사진 업로드
+                <input type="file" accept="image/*" class="hidden" onchange="handleMcPhotoUpload(event)" />
+              </label>
+              <button type="button" onclick="deleteMcPhotoAdmin()" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-[11px] px-3 py-1.5 rounded-xl">
+                🗑️ 사진 삭제
+              </button>
             </div>
           </div>
 
@@ -947,9 +960,9 @@
       </div>
     </div>
 
-    <div id="seating-scroll-container" class="flex-1 overflow-auto p-3 flex items-start justify-center">
-      <div id="seating-zoom-inner" class="mx-auto transition-all duration-150">
-        <img id="seating-img" src="./좌석표.png" data-candidates="./좌석표.png|./좌석표.PNG|./seating.png|./seating.jpg" data-idx="0" onerror="tryNextSeatingImg()" alt="은행꿈나무축제 2부 각 반 좌석표" class="w-full h-auto rounded-2xl shadow-2xl border border-amber-300/40 block bg-amber-50" />
+    <div id="seating-scroll-container" class="flex-1 overflow-auto p-3 touch-pan-x touch-pan-y">
+      <div id="seating-zoom-inner" class="mx-auto transition-all duration-150" style="width: 100%; max-width: 48rem;">
+        <img id="seating-img" src="./좌석표.png" data-candidates="./좌석표.png|./좌석표.PNG|./seating.png|./seating.jpg" data-idx="0" onerror="tryNextSeatingImg()" alt="은행꿈나무축제 2부 각 반 좌석표" class="w-full h-auto rounded-2xl shadow-2xl border border-amber-300/40 block bg-amber-50 select-none" />
         <div id="seating-fallback" class="hidden bg-amber-50 text-slate-900 rounded-3xl p-5 text-center border-2 border-amber-300 space-y-2">
           <p class="text-xs font-black text-rose-700">⚠️ GitHub 저장소에 <code>좌석표.png</code> 파일이 업로드되어 있는지 확인해 주세요.</p>
           <p class="text-[11px] text-slate-600">파일명을 <code>좌석표.png</code> (또는 <code>seating.png</code>)로 하여 <code>index.html</code>과 같은 폴더에 올려주시면 바로 표시됩니다.</p>
@@ -1173,10 +1186,11 @@
       const label = document.getElementById("seating-zoom-label");
       if (!inner || !scroller) return;
 
-      const baseW = Math.max(300, Math.min(760, scroller.clientWidth - 24));
+      const measuredW = scroller.clientWidth > 40 ? scroller.clientWidth - 24 : Math.min(window.innerWidth - 24, 720);
+      const baseW = Math.max(300, Math.min(760, measuredW));
       if (seatingZoomScale <= 1.01) {
-        inner.style.width = "100%";
         inner.style.maxWidth = "48rem";
+        inner.style.width = "100%";
       } else {
         inner.style.maxWidth = "none";
         inner.style.width = Math.round(baseW * seatingZoomScale) + "px";
@@ -1327,6 +1341,11 @@
       principalInfo: {
         title: "교장선생님 인사말",
         message: "사랑하는 신흥여자중학교 학생 여러분, 그리고 자리를 빛내주신 학부모님과 선생님들께 진심으로 감사드립니다. 오늘 은행꿈나무 축제가 여러분의 꿈과 끼를 마음껏 펼치는 행복한 추억이 되기를 응원합니다.",
+        photo: ""
+      },
+      mcInfo: {
+        names: "",
+        message: "2026 신흥여자중학교 은행꿈나무 축제를 활기차게 이끌어갈 자랑스러운 축제 사회자입니다!",
         photo: ""
       },
       users: [],
@@ -1484,7 +1503,17 @@
 
       try {
         const p = JSON.parse(localStorage.getItem("sh_principal_info") || "null");
-        if (p && typeof p === "object") AppState.principalInfo = { ...AppState.principalInfo, ...p };
+        if (p && typeof p === "object") {
+          AppState.principalInfo = { ...AppState.principalInfo, ...p };
+          if (p.mcInfo && typeof p.mcInfo === "object") {
+            AppState.mcInfo = { ...AppState.mcInfo, ...p.mcInfo };
+          }
+        }
+      } catch (e) {}
+
+      try {
+        const mc = JSON.parse(localStorage.getItem("sh_mc_info") || "null");
+        if (mc && typeof mc === "object") AppState.mcInfo = { ...AppState.mcInfo, ...mc };
       } catch (e) {}
     }
 
@@ -1906,6 +1935,10 @@
                 const p = JSON.parse(String(data.settings.principalInfoJson));
                 AppState.principalInfo = { ...AppState.principalInfo, ...p };
                 localStorage.setItem("sh_principal_info", JSON.stringify(AppState.principalInfo));
+                if (p.mcInfo && typeof p.mcInfo === "object") {
+                  AppState.mcInfo = { ...AppState.mcInfo, ...p.mcInfo };
+                  localStorage.setItem("sh_mc_info", JSON.stringify(AppState.mcInfo));
+                }
               } catch (e) {}
             }
           }
@@ -2495,6 +2528,11 @@
 
     function renderPart2View() {
       document.getElementById("p2-principal-title").textContent = AppState.principalInfo.title || "교장선생님 인사말";
+      const mcNames = (AppState.mcInfo?.names || "").trim();
+      const mcSubEl = document.getElementById("p2-mc-subtitle");
+      if (mcSubEl) {
+        mcSubEl.textContent = mcNames ? `진행: ${mcNames} (터치하여 사진·소개 보기)` : "터치하여 축제 사회자 프로필 보기";
+      }
       const listEl = document.getElementById("performance-list");
       listEl.innerHTML = AppState.teams.slice(0, 14).map((t, idx) => `
         <button onclick="openTeamModal(${idx})" class="w-full text-left festival-card hover:bg-amber-50/80 active:scale-[0.99] rounded-2xl p-3.5 transition flex items-center justify-between gap-3">
@@ -2518,165 +2556,48 @@
     }
 
     function openSpecialModal(kind) {
-      if (kind !== "principal") return;
-      const p = AppState.principalInfo;
-      document.getElementById("tm-order-badge").textContent = "식순 1 · OPENING";
-      document.getElementById("tm-category").textContent = "신흥여자중학교 교장선생님";
-      document.getElementById("tm-name").textContent = p.title || "교장선생님 인사말";
-      document.getElementById("tm-song").textContent = "";
-      document.getElementById("tm-members-box").classList.add("hidden");
-      document.getElementById("tm-intro").textContent = p.message || "";
+      if (kind === "principal") {
+        const p = AppState.principalInfo;
+        document.getElementById("tm-order-badge").textContent = "식순 1 · OPENING";
+        document.getElementById("tm-category").textContent = "신흥여자중학교 교장선생님";
+        document.getElementById("tm-name").textContent = p.title || "교장선생님 인사말";
+        document.getElementById("tm-song").textContent = "";
+        document.getElementById("tm-members-box").classList.add("hidden");
+        document.getElementById("tm-intro").textContent = p.message || "";
 
-      const wrap = document.getElementById("tm-photo-wrap");
-      const img = document.getElementById("tm-photo-img");
-      img.src = "";
-      if (p.photo) {
-        img.src = p.photo;
-        wrap.classList.remove("hidden");
-      } else {
-        wrap.classList.add("hidden");
-      }
-      document.getElementById("team-modal").classList.remove("hidden");
-    }
-
-    function openTeamModal(idx) {
-      const t = AppState.teams[idx];
-      if (!t) return;
-      document.getElementById("tm-order-badge").textContent = `학생 공연 ${idx + 1}번`;
-      document.getElementById("tm-category").textContent = t.category || "공연";
-      document.getElementById("tm-name").textContent = t.name;
-      document.getElementById("tm-song").textContent = t.song ? `🎵 ${t.song}` : "";
-      document.getElementById("tm-members-box").classList.remove("hidden");
-      document.getElementById("tm-members").textContent = t.members || "전체 팀원 명단";
-      document.getElementById("tm-intro").textContent = t.intro || "";
-
-      const wrap = document.getElementById("tm-photo-wrap");
-      const img = document.getElementById("tm-photo-img");
-      img.src = "";
-      if (t.photo) {
-        img.src = t.photo;
-        wrap.classList.remove("hidden");
-      } else {
-        wrap.classList.add("hidden");
-      }
-      document.getElementById("team-modal").classList.remove("hidden");
-    }
-
-    function renderCheersList() {
-      const box = document.getElementById("cheer-list");
-      if (!box) return;
-      if (AppState.cheers.length === 0) {
-        box.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">첫 번째 응원 메시지를 남겨보세요! 💛</p>`;
-        return;
-      }
-      box.innerHTML = AppState.cheers.map(c => `
-        <div class="bg-amber-50/85 border border-amber-100 rounded-2xl px-3.5 py-2.5 text-xs">
-          <div class="flex items-center justify-between text-[10px] font-bold text-amber-800 mb-0.5">
-            <span>${c.author}</span>
-            <span class="text-slate-400">${c.time || ""}</span>
-          </div>
-          <p class="font-bold text-slate-800 break-words">${c.text}</p>
-        </div>
-      `).join("");
-    }
-
-    async function submitCheerMessage(e) {
-      e.preventDefault();
-      const input = document.getElementById("cheer-input");
-      const text = input.value.trim();
-      if (!text) return;
-
-      const u = AppState.currentUser;
-      const author = u
-        ? (u.role === "학생" ? `${u.grade}-${u.classNum} ${u.name}` : u.role === "교사" ? `${u.name} (교직원)` : `${u.name} (${u.role})`)
-        : "축제 참여자";
-
-      input.value = "";
-      AppState.cheers.unshift({ time: "방금", userId: u?.userId || "", author, text });
-      renderCheersList();
-
-      try {
-        const res = await postToGas({ action: "addCheer", userId: u?.userId || "", author, text });
-        if (res && res.status === "ok" && Array.isArray(res.cheers)) {
-          AppState.cheers = res.cheers;
-          renderCheersList();
+        const wrap = document.getElementById("tm-photo-wrap");
+        const img = document.getElementById("tm-photo-img");
+        img.src = "";
+        if (p.photo) {
+          img.src = p.photo;
+          wrap.classList.remove("hidden");
+        } else {
+          wrap.classList.add("hidden");
         }
-      } catch (err) {}
-    }
-
-    function openAdminGate() {
-      document.getElementById("admin-gate-pw").value = "";
-      document.getElementById("admin-gate-modal").classList.remove("hidden");
-    }
-
-    function verifyAdminGate() {
-      const input = document.getElementById("admin-gate-pw").value.trim();
-      const master = localStorage.getItem("sh_admin_master_pw") || "admin2026";
-      if (input !== master && input !== "admin2026") {
-        showToast("❌ 총괄 운영본부 비밀번호가 올바르지 않습니다.");
+        document.getElementById("team-modal").classList.remove("hidden");
         return;
       }
-      closeModal("admin-gate-modal");
-      initAdminPanels();
-      switchView("view-admin");
-    }
 
-    function initAdminPanels() {
-      document.getElementById("adm-target-stamps-input").value = AppState.targetStamps;
-      document.getElementById("adm-gas-url-input").value = getGasUrl();
-      renderAdminStatsPanels();
-      initAdminQrPanel();
-      renderAdminBoothsEditor();
-      renderAdminRosterEditor();
-      renderAdminTeamsEditor();
-      renderAdminPasswordResetList();
-    }
+      if (kind === "mc") {
+        const mc = AppState.mcInfo || {};
+        document.getElementById("tm-order-badge").textContent = "FESTIVAL HOST · MC";
+        document.getElementById("tm-category").textContent = "2026 신흥여자중학교 은행꿈나무 축제";
+        document.getElementById("tm-name").textContent = "2026 은행꿈나무 축제 사회자";
+        document.getElementById("tm-song").textContent = mc.names ? `🎤 진행 사회자: ${mc.names}` : "";
+        document.getElementById("tm-members-box").classList.toggle("hidden", !mc.names);
+        document.getElementById("tm-members").textContent = mc.names || "";
+        document.getElementById("tm-intro").textContent = mc.message || "2026 은행꿈나무 축제를 진행하는 사회자입니다. 많은 응원과 박수 부탁드립니다!";
 
-    function switchAdminMainTab(num) {
-      document.getElementById("adm-panel-part1").classList.toggle("hidden", num !== 1);
-      document.getElementById("adm-panel-part2").classList.toggle("hidden", num !== 2);
-      document.getElementById("adm-main-tab-1").className = num === 1
-        ? "py-2 rounded-xl text-xs font-black bg-white text-slate-900 shadow-2xs"
-        : "py-2 rounded-xl text-xs font-bold text-slate-600";
-      document.getElementById("adm-main-tab-2").className = num === 2
-        ? "py-2 rounded-xl text-xs font-black bg-white text-slate-900 shadow-2xs"
-        : "py-2 rounded-xl text-xs font-bold text-slate-600";
-    }
-
-    function switchAdminSub1(tab) {
-      ["stats", "qr", "edit", "roster"].forEach(k => {
-        document.getElementById("adm-sub1-view-" + k).classList.toggle("hidden", k !== tab);
-        document.getElementById("adm-sub1-" + k).className = k === tab
-          ? "px-3 py-1.5 rounded-xl text-xs font-black bg-amber-500 text-white shrink-0"
-          : "px-3 py-1.5 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-700 shrink-0";
-      });
-    }
-
-    function switchAdminSub2(tab) {
-      ["teams", "passwords"].forEach(k => {
-        document.getElementById("adm-sub2-view-" + k).classList.toggle("hidden", k !== tab);
-        document.getElementById("adm-sub2-" + k).className = k === tab
-          ? "flex-1 py-2 rounded-xl text-xs font-black bg-amber-500 text-white"
-          : "flex-1 py-2 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-700";
-      });
-    }
-
-    function switchAchieverSubTab(tab) {
-      const isSummary = tab === "summary";
-      document.getElementById("adm-achiever-summary-panel")?.classList.toggle("hidden", !isSummary);
-      document.getElementById("adm-achiever-list-panel")?.classList.toggle("hidden", isSummary);
-
-      const btnSum = document.getElementById("btn-achiever-tab-summary");
-      const btnList = document.getElementById("btn-achiever-tab-list");
-      if (btnSum) {
-        btnSum.className = isSummary
-          ? "py-1.5 rounded-lg text-[11px] font-black bg-white text-amber-900 shadow-2xs transition"
-          : "py-1.5 rounded-lg text-[11px] font-bold text-slate-600 hover:text-slate-900 transition";
-      }
-      if (btnList) {
-        btnList.className = !isSummary
-          ? "py-1.5 rounded-lg text-[11px] font-black bg-white text-amber-900 shadow-2xs transition"
-          : "py-1.5 rounded-lg text-[11px] font-bold text-slate-600 hover:text-slate-900 transition";
+        const wrap = document.getElementById("tm-photo-wrap");
+        const img = document.getElementById("tm-photo-img");
+        img.src = "";
+        if (mc.photo) {
+          img.src = mc.photo;
+          wrap.classList.remove("hidden");
+        } else {
+          wrap.classList.add("hidden");
+        }
+        document.getElementById("team-modal").classList.remove("hidden");
       }
     }
 
@@ -3238,6 +3159,21 @@
         pPrev.classList.add("hidden");
       }
 
+      const mcNameInput = document.getElementById("adm-mc-names");
+      const mcMsgInput = document.getElementById("adm-mc-message");
+      const mcPrev = document.getElementById("adm-mc-preview");
+      if (mcNameInput) mcNameInput.value = AppState.mcInfo.names || "";
+      if (mcMsgInput) mcMsgInput.value = AppState.mcInfo.message || "";
+      if (mcPrev) {
+        if (AppState.mcInfo.photo) {
+          mcPrev.src = AppState.mcInfo.photo;
+          mcPrev.classList.remove("hidden");
+        } else {
+          mcPrev.src = "";
+          mcPrev.classList.add("hidden");
+        }
+      }
+
       const box = document.getElementById("adm-teams-editor-list");
       box.innerHTML = AppState.teams.slice(0, 14).map((t, idx) => `
         <div class="bg-slate-50 border border-slate-200 rounded-2xl p-3 space-y-2 text-xs">
@@ -3307,6 +3243,25 @@
       showToast("🗑️ 교장선생님 사진이 삭제되었습니다.");
     }
 
+    async function handleMcPhotoUpload(event) {
+      const file = event.target.files?.[0];
+      event.target.value = "";
+      if (!file) return;
+      const dataUrl = await compressImageFileToDataUrl(file, 440);
+      AppState.mcInfo.photo = dataUrl;
+      localStorage.setItem("sh_mc_info", JSON.stringify(AppState.mcInfo));
+      renderAdminTeamsEditor();
+      showToast("✅ 사회자 사진이 업로드되었습니다.");
+    }
+
+    async function deleteMcPhotoAdmin() {
+      AppState.mcInfo.photo = "";
+      localStorage.setItem("sh_mc_info", JSON.stringify(AppState.mcInfo));
+      renderAdminTeamsEditor();
+      await saveAllTeamsAdmin(true);
+      showToast("🗑️ 사회자 사진이 삭제되었습니다.");
+    }
+
     async function handleTeamPhotoUpload(idx, event) {
       const file = event.target.files?.[0];
       event.target.value = "";
@@ -3329,7 +3284,18 @@
     async function saveAllTeamsAdmin(silent = false) {
       AppState.principalInfo.title = document.getElementById("adm-principal-title").value.trim() || "교장선생님 인사말";
       AppState.principalInfo.message = document.getElementById("adm-principal-message").value.trim();
-      localStorage.setItem("sh_principal_info", JSON.stringify(AppState.principalInfo));
+
+      const mcNameEl = document.getElementById("adm-mc-names");
+      const mcMsgEl = document.getElementById("adm-mc-message");
+      if (mcNameEl) AppState.mcInfo.names = mcNameEl.value.trim();
+      if (mcMsgEl) AppState.mcInfo.message = mcMsgEl.value.trim();
+      localStorage.setItem("sh_mc_info", JSON.stringify(AppState.mcInfo));
+
+      const combinedPrincipalPayload = {
+        ...AppState.principalInfo,
+        mcInfo: AppState.mcInfo
+      };
+      localStorage.setItem("sh_principal_info", JSON.stringify(combinedPrincipalPayload));
 
       AppState.teams = AppState.teams.slice(0, 14).map((t, idx) => ({
         order: idx + 1,
@@ -3344,11 +3310,11 @@
       renderPart2View();
 
       try {
-        await postToGas({ action: "saveSettings", principalInfoJson: JSON.stringify(AppState.principalInfo) });
+        await postToGas({ action: "saveSettings", principalInfoJson: JSON.stringify(combinedPrincipalPayload) });
         await postToGas({ action: "saveTeamsBulk", teams: AppState.teams });
       } catch (e) {}
 
-      if (!silent) showToast("✅ 2부 공연 및 교장선생님 인사말이 저장되었습니다.");
+      if (!silent) showToast("✅ 2부 공연 · 사회자 · 교장선생님 인사말이 저장되었습니다.");
     }
 
     async function saveAdminMasterPasscode() {
