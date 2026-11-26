@@ -120,6 +120,9 @@
       </div>
 
       <div class="flex items-center gap-1.5 shrink-0">
+        <button type="button" onclick="toggleAppBgm()" class="app-bgm-toggle-btn active:scale-95 transition flex items-center gap-1 text-[10px] font-black px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200">
+          🔇 BGM OFF
+        </button>
         <button onclick="syncWithGoogleSheet(true)" title="구글 시트 데이터 즉시 새로고침" class="active:scale-95 transition flex items-center gap-1 text-[10px] font-black px-2.5 py-1 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-200">
           <span id="sync-status-pill">연동됨</span>
           <span>🔄</span>
@@ -132,7 +135,12 @@
 
     <!-- ==================== VIEW 1: 축제 메인 대문 (FRONT) ==================== -->
     <section id="view-front" class="view-section flex-1 flex flex-col justify-between p-6 text-center">
-      <div class="pt-3">
+      <div class="pt-2 space-y-2.5">
+        <div class="flex justify-end">
+          <button type="button" onclick="toggleAppBgm()" class="app-bgm-toggle-btn active:scale-95 transition inline-flex items-center gap-1 text-[11px] font-black px-3 py-1.5 rounded-full bg-white/90 hover:bg-amber-50 text-slate-600 border border-amber-300 shadow-2xs">
+            🔇 BGM OFF
+          </button>
+        </div>
         <div class="inline-flex items-center gap-1.5 bg-amber-100/90 border border-amber-300 text-amber-950 text-xs font-black px-4 py-1.5 rounded-full shadow-2xs">
           <svg class="w-4 h-4 text-amber-500 shrink-0" viewBox="0 0 64 64" fill="currentColor">
             <path d="M33 58 L30 58 L30 36 C17 39, 7 31, 5 20 C14 15, 22 18, 28 24 C25 14, 27 7, 32 5 C37 7, 39 14, 36 24 C42 18, 50 15, 59 20 C57 31, 47 39, 34 36 Z"/>
@@ -163,7 +171,7 @@
       </div>
 
       <div class="space-y-2.5 pb-2">
-        <button onclick="switchView('view-guide')" class="w-full py-4 rounded-2xl amber-hero-grad hover:brightness-105 active:scale-[0.98] text-white font-black text-lg shadow-xl shadow-amber-500/30 transition">
+        <button onclick="handleStartFestivalClick()" class="w-full py-4 rounded-2xl amber-hero-grad hover:brightness-105 active:scale-[0.98] text-white font-black text-lg shadow-xl shadow-amber-500/30 transition">
           축제 참여하기 →
         </button>
         <button onclick="openAdminGate()" class="w-full py-2.5 rounded-xl bg-slate-900/5 hover:bg-slate-900/10 text-slate-600 font-bold text-xs transition">
@@ -1554,6 +1562,137 @@
       if (toastTimeout) clearTimeout(toastTimeout);
       toastTimeout = setTimeout(() => el.classList.add("hidden"), 3000);
     }
+
+    /* ==================== 축제 기본 배경음악 (Web Audio 밝은 축제 멜로디) ==================== */
+    const AppBgm = {
+      ctx: null,
+      enabled: false,
+      userMuted: false,
+      timer: null,
+      step: 0,
+      // 경쾌하고 따뜻한 축제 분위기 C Major 32스텝 멜로디 & 베이스
+      melody: [
+        523.25, 0, 659.25, 783.99, 1046.50, 0, 783.99, 659.25,
+        880.00, 0, 1046.50, 880.00, 783.99, 0, 659.25, 0,
+        698.46, 0, 880.00, 1046.50, 987.77, 0, 783.99, 587.33,
+        659.25, 783.99, 880.00, 987.77, 1046.50, 0, 0, 0
+      ],
+      bass: [
+        261.63, 0, 329.63, 0, 261.63, 0, 392.00, 0,
+        220.00, 0, 261.63, 0, 329.63, 0, 261.63, 0,
+        174.61, 0, 220.00, 0, 196.00, 0, 246.94, 0,
+        261.63, 0, 196.00, 0, 261.63, 0, 0, 0
+      ]
+    };
+
+    function updateAppBgmButtons() {
+      document.querySelectorAll(".app-bgm-toggle-btn").forEach(btn => {
+        if (AppBgm.enabled) {
+          btn.textContent = "🔊 BGM ON";
+          btn.classList.remove("bg-slate-100", "text-slate-600", "bg-white/90");
+          btn.classList.add("bg-amber-500", "text-white", "border-amber-600");
+        } else {
+          btn.textContent = "🔇 BGM OFF";
+          btn.classList.remove("bg-amber-500", "text-white", "border-amber-600");
+          btn.classList.add("bg-white/90", "text-slate-600", "border-amber-300");
+        }
+      });
+    }
+
+    function playBgmStep() {
+      if (!AppBgm.enabled || !AppBgm.ctx) return;
+      if (AppBgm.ctx.state === "suspended") {
+        AppBgm.ctx.resume().catch(() => {});
+      }
+      const now = AppBgm.ctx.currentTime;
+      const idx = AppBgm.step % AppBgm.melody.length;
+      const mFreq = AppBgm.melody[idx];
+      const bFreq = AppBgm.bass[idx];
+
+      if (mFreq > 0) {
+        const osc = AppBgm.ctx.createOscillator();
+        const gain = AppBgm.ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(mFreq, now);
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.055, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0008, now + 0.28);
+        osc.connect(gain);
+        gain.connect(AppBgm.ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.3);
+      }
+
+      if (bFreq > 0) {
+        const bOsc = AppBgm.ctx.createOscillator();
+        const bGain = AppBgm.ctx.createGain();
+        bOsc.type = "triangle";
+        bOsc.frequency.setValueAtTime(bFreq, now);
+        bGain.gain.setValueAtTime(0.001, now);
+        bGain.gain.linearRampToValueAtTime(0.032, now + 0.02);
+        bGain.gain.exponentialRampToValueAtTime(0.0008, now + 0.34);
+        bOsc.connect(bGain);
+        bGain.connect(AppBgm.ctx.destination);
+        bOsc.start(now);
+        bOsc.stop(now + 0.36);
+      }
+
+      AppBgm.step++;
+    }
+
+    function startAppBgm(silent = false) {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        if (!AppBgm.ctx) AppBgm.ctx = new AudioCtx();
+        if (AppBgm.ctx.state === "suspended") {
+          AppBgm.ctx.resume().catch(() => {});
+        }
+        AppBgm.enabled = true;
+        AppBgm.userMuted = false;
+        updateAppBgmButtons();
+        if (!AppBgm.timer) {
+          playBgmStep();
+          AppBgm.timer = setInterval(playBgmStep, 260);
+        }
+        if (!silent) showToast("🎵 축제 배경음악이 켜졌습니다.");
+      } catch (e) {}
+    }
+
+    function stopAppBgm(silent = false) {
+      AppBgm.enabled = false;
+      AppBgm.userMuted = true;
+      if (AppBgm.timer) {
+        clearInterval(AppBgm.timer);
+        AppBgm.timer = null;
+      }
+      updateAppBgmButtons();
+      if (!silent) showToast("🔇 배경음악이 꺼졌습니다.");
+    }
+
+    function toggleAppBgm() {
+      if (AppBgm.enabled) {
+        stopAppBgm(false);
+      } else {
+        startAppBgm(false);
+      }
+    }
+
+    function handleStartFestivalClick() {
+      if (!AppBgm.enabled && !AppBgm.userMuted) {
+        startAppBgm(true);
+      }
+      switchView("view-guide");
+    }
+
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden && AppBgm.timer) {
+        clearInterval(AppBgm.timer);
+        AppBgm.timer = null;
+      } else if (!document.hidden && AppBgm.enabled && !AppBgm.timer) {
+        AppBgm.timer = setInterval(playBgmStep, 260);
+      }
+    });
 
     let isQrScanHandling = false;
 
