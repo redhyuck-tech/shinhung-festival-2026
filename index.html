@@ -120,8 +120,8 @@
       </div>
 
       <div class="flex items-center gap-1.5 shrink-0">
-        <button type="button" onclick="toggleAppBgm()" class="app-bgm-toggle-btn active:scale-95 transition flex items-center gap-1 text-[10px] font-black px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 border border-slate-200">
-          🔇 BGM OFF
+        <button type="button" onclick="toggleAppBgm()" class="app-bgm-toggle-btn active:scale-95 transition flex items-center gap-1 text-[10px] font-black px-2.5 py-1 rounded-full bg-amber-500 text-white border border-amber-600">
+          🔊 BGM ON
         </button>
         <button onclick="syncWithGoogleSheet(true)" title="구글 시트 데이터 즉시 새로고침" class="active:scale-95 transition flex items-center gap-1 text-[10px] font-black px-2.5 py-1 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-200">
           <span id="sync-status-pill">연동됨</span>
@@ -137,8 +137,8 @@
     <section id="view-front" class="view-section flex-1 flex flex-col justify-between p-6 text-center">
       <div class="pt-2 space-y-2.5">
         <div class="flex justify-end">
-          <button type="button" onclick="toggleAppBgm()" class="app-bgm-toggle-btn active:scale-95 transition inline-flex items-center gap-1 text-[11px] font-black px-3 py-1.5 rounded-full bg-white/90 hover:bg-amber-50 text-slate-600 border border-amber-300 shadow-2xs">
-            🔇 BGM OFF
+          <button type="button" onclick="toggleAppBgm()" class="app-bgm-toggle-btn active:scale-95 transition inline-flex items-center gap-1 text-[11px] font-black px-3 py-1.5 rounded-full bg-amber-500 text-white border border-amber-600 shadow-2xs">
+            🔊 BGM ON
           </button>
         </div>
         <div class="inline-flex items-center gap-1.5 bg-amber-100/90 border border-amber-300 text-amber-950 text-xs font-black px-4 py-1.5 rounded-full shadow-2xs">
@@ -1430,6 +1430,9 @@
       populateStudentNumberSelect();
       populateStaffSelect();
 
+      // 기본 BGM 자동 켜기 (모바일 정책상 차단 시 첫 화면 터치 순간 즉시 자동 재생)
+      initDefaultAutoBgm();
+
       if (!localStorage.getItem("sh_photos_purged_v5")) {
         AppState.teams = AppState.teams.map(t => ({ ...t, photo: "" }));
         AppState.principalInfo.photo = "";
@@ -1517,13 +1520,15 @@
       const backBtn = document.getElementById("btn-nav-back");
       const logoutBtn = document.getElementById("btn-logout");
 
-      if (viewId === "view-front") {
-        navbar.classList.add("hidden");
-      } else {
-        navbar.classList.remove("hidden");
-        const showBack = ["view-guide", "view-login", "view-part1", "view-part2"].includes(viewId);
-        backBtn.classList.toggle("hidden", !showBack);
-        logoutBtn.classList.toggle("hidden", !AppState.currentUser);
+      if (navbar) {
+        if (viewId === "view-front") {
+          navbar.classList.add("hidden");
+        } else {
+          navbar.classList.remove("hidden");
+          const showBack = ["view-guide", "view-login", "view-part1", "view-part2"].includes(viewId);
+          if (backBtn) backBtn.classList.toggle("hidden", !showBack);
+          if (logoutBtn) logoutBtn.classList.toggle("hidden", !AppState.currentUser);
+        }
       }
 
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1563,14 +1568,15 @@
       toastTimeout = setTimeout(() => el.classList.add("hidden"), 3000);
     }
 
-    /* ==================== 축제 기본 배경음악 (Web Audio 밝은 축제 멜로디) ==================== */
+    /* ==================== 축제 기본 배경음악 (GitHub bgm.mp3 / bgm.m4a 우선 + 내장 멜로디 백업) ==================== */
     const AppBgm = {
+      audio: null,
+      usingExternalFile: false,
       ctx: null,
-      enabled: false,
+      enabled: true,
       userMuted: false,
       timer: null,
       step: 0,
-      // 경쾌하고 따뜻한 축제 분위기 C Major 32스텝 멜로디 & 베이스
       melody: [
         523.25, 0, 659.25, 783.99, 1046.50, 0, 783.99, 659.25,
         880.00, 0, 1046.50, 880.00, 783.99, 0, 659.25, 0,
@@ -1589,7 +1595,7 @@
       document.querySelectorAll(".app-bgm-toggle-btn").forEach(btn => {
         if (AppBgm.enabled) {
           btn.textContent = "🔊 BGM ON";
-          btn.classList.remove("bg-slate-100", "text-slate-600", "bg-white/90");
+          btn.classList.remove("bg-slate-100", "text-slate-600", "bg-white/90", "border-amber-300", "border-slate-200");
           btn.classList.add("bg-amber-500", "text-white", "border-amber-600");
         } else {
           btn.textContent = "🔇 BGM OFF";
@@ -1599,8 +1605,54 @@
       });
     }
 
+    function setupExternalBgmAudio() {
+      if (AppBgm.audio) return AppBgm.audio;
+      const candidates = ["./bgm.mp3", "./bgm.m4a", "./bgm.wav", "./bgm.ogg"];
+      let idx = 0;
+      const audio = new Audio();
+      audio.loop = true;
+      audio.volume = 0.65;
+      audio.preload = "auto";
+      AppBgm.usingExternalFile = true;
+
+      audio.onerror = () => {
+        idx++;
+        if (idx < candidates.length) {
+          audio.src = candidates[idx];
+        } else {
+          AppBgm.usingExternalFile = false;
+          if (AppBgm.enabled && !AppBgm.timer) {
+            startFallbackSynthTimer();
+          }
+        }
+      };
+
+      audio.src = candidates[0];
+      AppBgm.audio = audio;
+      return audio;
+    }
+
+    function initDefaultAutoBgm() {
+      AppBgm.enabled = true;
+      AppBgm.userMuted = false;
+      updateAppBgmButtons();
+      startAppBgm(true);
+
+      const unlockOnFirstInteraction = () => {
+        if (AppBgm.enabled && !AppBgm.userMuted) {
+          startAppBgm(true);
+        }
+        document.removeEventListener("pointerdown", unlockOnFirstInteraction);
+        document.removeEventListener("touchstart", unlockOnFirstInteraction);
+        document.removeEventListener("keydown", unlockOnFirstInteraction);
+      };
+      document.addEventListener("pointerdown", unlockOnFirstInteraction, { once: true });
+      document.addEventListener("touchstart", unlockOnFirstInteraction, { once: true });
+      document.addEventListener("keydown", unlockOnFirstInteraction, { once: true });
+    }
+
     function playBgmStep() {
-      if (!AppBgm.enabled || !AppBgm.ctx) return;
+      if (!AppBgm.enabled || !AppBgm.ctx || AppBgm.usingExternalFile) return;
       if (AppBgm.ctx.state === "suspended") {
         AppBgm.ctx.resume().catch(() => {});
       }
@@ -1640,7 +1692,7 @@
       AppBgm.step++;
     }
 
-    function startAppBgm(silent = false) {
+    function startFallbackSynthTimer() {
       try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!AudioCtx) return;
@@ -1648,20 +1700,38 @@
         if (AppBgm.ctx.state === "suspended") {
           AppBgm.ctx.resume().catch(() => {});
         }
-        AppBgm.enabled = true;
-        AppBgm.userMuted = false;
-        updateAppBgmButtons();
         if (!AppBgm.timer) {
           playBgmStep();
           AppBgm.timer = setInterval(playBgmStep, 260);
         }
-        if (!silent) showToast("🎵 축제 배경음악이 켜졌습니다.");
       } catch (e) {}
+    }
+
+    function startAppBgm(silent = false) {
+      AppBgm.enabled = true;
+      AppBgm.userMuted = false;
+      updateAppBgmButtons();
+
+      const audio = setupExternalBgmAudio();
+      if (AppBgm.usingExternalFile && audio) {
+        const p = audio.play();
+        if (p && typeof p.catch === "function") {
+          p.catch(() => {
+            if (!AppBgm.usingExternalFile) startFallbackSynthTimer();
+          });
+        }
+      } else {
+        startFallbackSynthTimer();
+      }
+      if (!silent) showToast("🎵 축제 배경음악이 켜졌습니다.");
     }
 
     function stopAppBgm(silent = false) {
       AppBgm.enabled = false;
       AppBgm.userMuted = true;
+      if (AppBgm.audio) {
+        AppBgm.audio.pause();
+      }
       if (AppBgm.timer) {
         clearInterval(AppBgm.timer);
         AppBgm.timer = null;
@@ -1679,18 +1749,21 @@
     }
 
     function handleStartFestivalClick() {
-      if (!AppBgm.enabled && !AppBgm.userMuted) {
+      if (AppBgm.enabled && !AppBgm.userMuted) {
         startAppBgm(true);
       }
       switchView("view-guide");
     }
 
     document.addEventListener("visibilitychange", () => {
-      if (document.hidden && AppBgm.timer) {
-        clearInterval(AppBgm.timer);
-        AppBgm.timer = null;
-      } else if (!document.hidden && AppBgm.enabled && !AppBgm.timer) {
-        AppBgm.timer = setInterval(playBgmStep, 260);
+      if (document.hidden) {
+        if (AppBgm.audio) AppBgm.audio.pause();
+        if (AppBgm.timer) {
+          clearInterval(AppBgm.timer);
+          AppBgm.timer = null;
+        }
+      } else if (!document.hidden && AppBgm.enabled && !AppBgm.userMuted) {
+        startAppBgm(true);
       }
     });
 
