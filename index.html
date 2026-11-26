@@ -458,8 +458,9 @@
           <h2 class="text-xl font-black text-slate-900 mt-1">2부 꿈나무 공연마당 식순</h2>
           <p class="text-xs text-slate-500">카드를 누르면 상세 소개 및 전체 팀원 명단을 볼 수 있습니다.</p>
         </div>
-        <button onclick="syncWithGoogleSheet(true)" class="shrink-0 mt-1 text-[11px] font-black text-amber-800 bg-amber-100 hover:bg-amber-200 px-2.5 py-1.5 rounded-xl transition">
-          🔄 시트 동기화
+        <button type="button" onclick="openSeatingModal()" class="shrink-0 mt-1 text-xs font-black text-amber-950 bg-amber-200 hover:bg-amber-300 active:scale-95 px-3 py-2 rounded-xl shadow-2xs border border-amber-300 transition flex items-center gap-1">
+          <span>🪑</span>
+          <span>좌석표 보기</span>
         </button>
       </div>
 
@@ -923,6 +924,32 @@
     </div>
   </div>
 
+  <!-- ==================== 2부 각 반 좌석표 모달 (좌석표.png + 확대/축소 & 핀치 줌) ==================== -->
+  <div id="seating-modal" class="hidden fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-xs flex flex-col" onclick="if(event.target===this) closeSeatingModal()">
+    <div class="bg-slate-900 text-white px-4 py-3 border-b border-amber-400/40 flex items-center justify-between gap-2 shrink-0">
+      <div class="min-w-0">
+        <span class="text-[10px] font-black text-amber-400 tracking-wider block">PART 2 · AUDITORIUM SEATING</span>
+        <h3 class="text-sm font-black truncate">🪑 은행꿈나무축제 2부 각 반 좌석표</h3>
+      </div>
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button type="button" onclick="changeSeatingZoom(-0.3)" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-black text-sm">－</button>
+        <span id="seating-zoom-label" class="text-[11px] font-black text-amber-300 w-11 text-center">100%</span>
+        <button type="button" onclick="changeSeatingZoom(0.3)" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-black text-sm">＋</button>
+        <button type="button" onclick="closeSeatingModal()" class="w-8 h-8 rounded-full bg-rose-600 hover:bg-rose-500 text-white font-black ml-1">✕</button>
+      </div>
+    </div>
+
+    <div id="seating-scroll-container" class="flex-1 overflow-auto p-3 flex items-start justify-center">
+      <div id="seating-zoom-inner" class="mx-auto transition-all duration-150">
+        <img id="seating-img" src="./좌석표.png" data-candidates="./좌석표.png|./좌석표.PNG|./seating.png|./seating.jpg" data-idx="0" onerror="tryNextSeatingImg()" alt="은행꿈나무축제 2부 각 반 좌석표" class="w-full h-auto rounded-2xl shadow-2xl border border-amber-300/40 block bg-amber-50" />
+        <div id="seating-fallback" class="hidden bg-amber-50 text-slate-900 rounded-3xl p-5 text-center border-2 border-amber-300 space-y-2">
+          <p class="text-xs font-black text-rose-700">⚠️ GitHub 저장소에 <code>좌석표.png</code> 파일이 업로드되어 있는지 확인해 주세요.</p>
+          <p class="text-[11px] text-slate-600">파일명을 <code>좌석표.png</code> (또는 <code>seating.png</code>)로 하여 <code>index.html</code>과 같은 폴더에 올려주시면 바로 표시됩니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ==================== 총괄 운영본부 비밀번호 모달 ==================== -->
   <div id="admin-gate-modal" class="hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-xs flex items-center justify-center p-4" onclick="if(event.target===this) closeModal('admin-gate-modal')">
     <div class="bg-white rounded-3xl w-full max-w-xs p-5 shadow-2xl space-y-3 text-center">
@@ -930,8 +957,8 @@
       <p class="text-xs text-slate-500">운영본부 비밀번호를 입력해 주세요.</p>
       <input id="admin-gate-pw" type="password" placeholder="비밀번호 입력" onkeydown="if(event.key==='Enter') verifyAdminGate()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-black text-center focus:outline-none focus:border-amber-500" />
       <div class="flex gap-2">
-        <button onclick="closeModal('admin-gate-modal')" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-600 font-bold text-xs">취소</button>
-        <button onclick="verifyAdminGate()" class="flex-1 py-2.5 rounded-xl bg-slate-900 text-white font-black text-xs">입장</button>
+        <button type="button" onclick="closeModal('admin-gate-modal')" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-600 font-bold text-xs">취소</button>
+        <button type="button" onclick="verifyAdminGate()" class="flex-1 py-2.5 rounded-xl bg-slate-900 text-white font-black text-xs">입장</button>
       </div>
     </div>
   </div>
@@ -998,45 +1025,14 @@
     let leafletPinchStartDist = 0;
     let leafletPinchStartScale = 1;
 
-    function renderLeafletFallbackTables() {
-      const stageBox = document.getElementById("leaflet-fallback-stage-list");
-      if (stageBox && !stageBox.dataset.rendered) {
-        stageBox.dataset.rendered = "1";
-        stageBox.innerHTML = `<div class="text-xs font-black text-amber-900 pt-1">🎤 2부 공연마당 (웅비관)</div>` +
-          LEAFLET_PART2_STAGE.map(item => `
-            <div class="bg-white border border-amber-200 rounded-xl px-3 py-2 text-xs flex items-center justify-between gap-2">
-              <div class="min-w-0">
-                <span class="font-black text-orange-600 mr-1">${item.no}.</span>
-                <span class="font-black text-slate-900">${item.team}</span>
-                <span class="text-[11px] text-slate-500 block truncate">${item.song}</span>
-              </div>
-              <span class="text-[11px] font-bold text-slate-600 shrink-0">${item.members}</span>
-            </div>
-          `).join("");
-      }
-
-      const insideBox = document.getElementById("leaflet-fallback-inside");
-      if (insideBox && !insideBox.dataset.rendered) {
-        insideBox.dataset.rendered = "1";
-        insideBox.innerHTML = `<div class="text-xs font-black text-amber-200 px-1 pb-1">🎪 1부 체험마당 (교실 · 1~28번 부스 안내)</div>` +
-          LEAFLET_PART1_BOOTHS.map(b => `
-            <div class="bg-white border border-amber-200 rounded-xl px-3 py-2 text-xs flex items-center justify-between gap-2">
-              <div class="min-w-0">
-                <span class="font-black text-amber-700 mr-1">#${b.no}</span>
-                <span class="font-black text-slate-900">${b.title}</span>
-                <span class="text-[11px] text-slate-500 block">담당교사: ${b.teacher}</span>
-              </div>
-              <span class="text-[11px] font-black text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-lg shrink-0">${b.place}</span>
-            </div>
-          `).join("");
-      }
-    }
+    let seatingZoomScale = 1;
+    let seatingPinchStartDist = 0;
+    let seatingPinchStartScale = 1;
 
     function tryNextLeafletImg(side) {
       const img = document.getElementById("leaflet-img-" + side);
       const fallback = document.getElementById("leaflet-fallback-" + side);
       if (!img) return;
-
       const list = (img.dataset.candidates || "").split("|").filter(Boolean);
       const nextIdx = Number(img.dataset.idx || 0) + 1;
       if (nextIdx < list.length) {
@@ -1050,33 +1046,35 @@
 
     function openLeafletModal() {
       leafletZoomScale = 1;
-      renderLeafletFallbackTables();
       switchLeafletSide("front");
-      document.getElementById("leaflet-modal").classList.remove("hidden");
+      const modal = document.getElementById("leaflet-modal");
+      if (!modal) return;
+      modal.classList.remove("hidden");
       requestAnimationFrame(() => applyLeafletZoom());
       bindLeafletPinchZoom();
     }
 
     function closeLeafletModal() {
-      document.getElementById("leaflet-modal").classList.add("hidden");
+      document.getElementById("leaflet-modal")?.classList.add("hidden");
     }
 
     function switchLeafletSide(side) {
       const isFront = side === "front";
-      document.getElementById("leaflet-pane-front").classList.toggle("hidden", !isFront);
-      document.getElementById("leaflet-pane-inside").classList.toggle("hidden", isFront);
-      document.getElementById("btn-leaflet-side-front").className = isFront
-        ? "flex-1 max-w-[180px] py-2 rounded-xl text-xs font-black bg-amber-500 text-slate-950 shadow transition"
-        : "flex-1 max-w-[180px] py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition";
-      document.getElementById("btn-leaflet-side-inside").className = !isFront
-        ? "flex-1 max-w-[180px] py-2 rounded-xl text-xs font-black bg-amber-500 text-slate-950 shadow transition"
-        : "flex-1 max-w-[180px] py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition";
-      const scroller = document.getElementById("leaflet-scroll-container");
-      if (scroller) {
-        scroller.scrollTop = 0;
-        scroller.scrollLeft = 0;
+      document.getElementById("leaflet-pane-front")?.classList.toggle("hidden", !isFront);
+      document.getElementById("leaflet-pane-inside")?.classList.toggle("hidden", isFront);
+
+      const btnFront = document.getElementById("btn-leaflet-side-front");
+      const btnInside = document.getElementById("btn-leaflet-side-inside");
+      if (btnFront) {
+        btnFront.className = isFront
+          ? "flex-1 max-w-[180px] py-2 rounded-xl text-xs font-black bg-amber-500 text-slate-950 shadow transition"
+          : "flex-1 max-w-[180px] py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition";
       }
-      applyLeafletZoom();
+      if (btnInside) {
+        btnInside.className = !isFront
+          ? "flex-1 max-w-[180px] py-2 rounded-xl text-xs font-black bg-amber-500 text-slate-950 shadow transition"
+          : "flex-1 max-w-[180px] py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:text-white transition";
+      }
     }
 
     function changeLeafletZoom(delta) {
@@ -1124,6 +1122,83 @@
           const nextScale = leafletPinchStartScale * (dist / leafletPinchStartDist);
           leafletZoomScale = Math.max(1, Math.min(3.5, Math.round(nextScale * 100) / 100));
           applyLeafletZoom();
+        }
+      }, { passive: false });
+    }
+
+    function tryNextSeatingImg() {
+      const img = document.getElementById("seating-img");
+      const fallback = document.getElementById("seating-fallback");
+      if (!img) return;
+      const list = (img.dataset.candidates || "").split("|").filter(Boolean);
+      const nextIdx = Number(img.dataset.idx || 0) + 1;
+      if (nextIdx < list.length) {
+        img.dataset.idx = String(nextIdx);
+        img.src = encodeURI(list[nextIdx]);
+      } else {
+        img.classList.add("hidden");
+        if (fallback) fallback.classList.remove("hidden");
+      }
+    }
+
+    function openSeatingModal() {
+      seatingZoomScale = 1;
+      const modal = document.getElementById("seating-modal");
+      if (!modal) return;
+      modal.classList.remove("hidden");
+      requestAnimationFrame(() => applySeatingZoom());
+      bindSeatingPinchZoom();
+    }
+
+    function closeSeatingModal() {
+      document.getElementById("seating-modal")?.classList.add("hidden");
+    }
+
+    function changeSeatingZoom(delta) {
+      seatingZoomScale = Math.max(1, Math.min(3.5, Math.round((seatingZoomScale + delta) * 100) / 100));
+      applySeatingZoom();
+    }
+
+    function applySeatingZoom() {
+      const inner = document.getElementById("seating-zoom-inner");
+      const scroller = document.getElementById("seating-scroll-container");
+      const label = document.getElementById("seating-zoom-label");
+      if (!inner || !scroller) return;
+
+      const baseW = Math.max(300, Math.min(760, scroller.clientWidth - 24));
+      if (seatingZoomScale <= 1.01) {
+        inner.style.width = "100%";
+        inner.style.maxWidth = "48rem";
+      } else {
+        inner.style.maxWidth = "none";
+        inner.style.width = Math.round(baseW * seatingZoomScale) + "px";
+      }
+      if (label) label.textContent = Math.round(seatingZoomScale * 100) + "%";
+    }
+
+    function bindSeatingPinchZoom() {
+      const scroller = document.getElementById("seating-scroll-container");
+      if (!scroller || scroller.dataset.pinchBound) return;
+      scroller.dataset.pinchBound = "1";
+
+      scroller.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 2) {
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          seatingPinchStartDist = Math.hypot(dx, dy);
+          seatingPinchStartScale = seatingZoomScale;
+        }
+      }, { passive: true });
+
+      scroller.addEventListener("touchmove", (e) => {
+        if (e.touches.length === 2 && seatingPinchStartDist > 10) {
+          e.preventDefault();
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const dist = Math.hypot(dx, dy);
+          const nextScale = seatingPinchStartScale * (dist / seatingPinchStartDist);
+          seatingZoomScale = Math.max(1, Math.min(3.5, Math.round(nextScale * 100) / 100));
+          applySeatingZoom();
         }
       }, { passive: false });
     }
