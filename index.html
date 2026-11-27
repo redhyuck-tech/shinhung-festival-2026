@@ -789,6 +789,24 @@
 
           <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2.5">
             <div class="flex items-center justify-between">
+              <h4 class="text-xs font-black text-slate-800">🎤 학생 공연 14팀 정보 및 사진 관리</h4>
+              <button onclick="saveAllTeamsAdmin()" class="bg-slate-900 text-white text-[11px] font-black px-3 py-1.5 rounded-xl">전체 저장</button>
+            </div>
+            <div id="adm-teams-editor-list" class="space-y-3 max-h-96 overflow-y-auto pr-1"></div>
+          </div>
+        </div>
+
+        <div id="adm-sub2-view-passwords" class="hidden space-y-3">
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2">
+            <h4 class="text-xs font-black text-slate-800">🛡️ 총괄 운영본부 마스터 비밀번호 변경</h4>
+            <div class="flex gap-2">
+              <input id="adm-master-pw-input" type="text" placeholder="새 총괄본부 비밀번호 (기본: admin2026)" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold" />
+              <button onclick="saveAdminMasterPasscode()" class="bg-slate-900 text-white text-xs font-black px-4 py-2 rounded-xl">변경</button>
+            </div>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2.5">
+            <div class="flex items-center justify-between">
               <h4 class="text-xs font-black text-slate-800">🔑 참여자 비밀번호 · 스탬프 초기화 관리</h4>
               <button onclick="syncWithGoogleSheet(true)" class="text-[11px] font-bold text-amber-600">목록 갱신</button>
             </div>
@@ -2598,6 +2616,141 @@
           wrap.classList.add("hidden");
         }
         document.getElementById("team-modal").classList.remove("hidden");
+      }
+    }
+
+    function renderCheersList() {
+      const box = document.getElementById("cheer-list");
+      if (!box) return;
+      if (AppState.cheers.length === 0) {
+        box.innerHTML = `<p class="text-xs text-slate-400 text-center py-4">첫 번째 응원 메시지를 남겨보세요! 💛</p>`;
+        return;
+      }
+      box.innerHTML = AppState.cheers.map(c => `
+        <div class="bg-amber-50/85 border border-amber-100 rounded-2xl px-3.5 py-2.5 text-xs">
+          <div class="flex items-center justify-between text-[10px] font-bold text-amber-800 mb-0.5">
+            <span>${c.author}</span>
+            <span class="text-slate-400">${c.time || ""}</span>
+          </div>
+          <p class="font-bold text-slate-800 break-words">${c.text}</p>
+        </div>
+      `).join("");
+    }
+
+    async function submitCheerMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById("cheer-input");
+      const text = input.value.trim();
+      if (!text) return;
+
+      const u = AppState.currentUser;
+      const author = u
+        ? (u.role === "학생" ? `${u.grade}-${u.classNum} ${u.name}` : u.role === "교사" ? `${u.name} (교직원)` : `${u.name} (${u.role})`)
+        : "축제 참여자";
+
+      input.value = "";
+      AppState.cheers.unshift({ time: "방금", userId: u?.userId || "", author, text });
+      renderCheersList();
+
+      try {
+        const res = await postToGas({ action: "addCheer", userId: u?.userId || "", author, text });
+        if (res && res.status === "ok" && Array.isArray(res.cheers)) {
+          AppState.cheers = res.cheers;
+          renderCheersList();
+        }
+      } catch (err) {}
+    }
+
+    function openAdminGate() {
+      const pwInput = document.getElementById("admin-gate-pw");
+      const modal = document.getElementById("admin-gate-modal");
+      if (pwInput) pwInput.value = "";
+      if (modal) modal.classList.remove("hidden");
+      setTimeout(() => pwInput?.focus(), 60);
+    }
+
+    function verifyAdminGate() {
+      const input = (document.getElementById("admin-gate-pw")?.value || "").trim();
+      const master = localStorage.getItem("sh_admin_master_pw") || "admin2026";
+      if (input !== master && input !== "admin2026") {
+        showToast("❌ 총괄 운영본부 비밀번호가 올바르지 않습니다.");
+        return;
+      }
+      closeModal("admin-gate-modal");
+      initAdminPanels();
+      switchView("view-admin");
+    }
+
+    function initAdminPanels() {
+      const targetInput = document.getElementById("adm-target-stamps-input");
+      const gasInput = document.getElementById("adm-gas-url-input");
+      if (targetInput) targetInput.value = AppState.targetStamps;
+      if (gasInput) gasInput.value = getGasUrl();
+      renderAdminStatsPanels();
+      initAdminQrPanel();
+      renderAdminBoothsEditor();
+      renderAdminRosterEditor();
+      renderAdminTeamsEditor();
+      renderAdminPasswordResetList();
+    }
+
+    function switchAdminMainTab(num) {
+      document.getElementById("adm-panel-part1")?.classList.toggle("hidden", num !== 1);
+      document.getElementById("adm-panel-part2")?.classList.toggle("hidden", num !== 2);
+      const t1 = document.getElementById("adm-main-tab-1");
+      const t2 = document.getElementById("adm-main-tab-2");
+      if (t1) {
+        t1.className = num === 1
+          ? "py-2 rounded-xl text-xs font-black bg-white text-slate-900 shadow-2xs"
+          : "py-2 rounded-xl text-xs font-bold text-slate-600";
+      }
+      if (t2) {
+        t2.className = num === 2
+          ? "py-2 rounded-xl text-xs font-black bg-white text-slate-900 shadow-2xs"
+          : "py-2 rounded-xl text-xs font-bold text-slate-600";
+      }
+    }
+
+    function switchAdminSub1(tab) {
+      ["stats", "qr", "edit", "roster"].forEach(k => {
+        document.getElementById("adm-sub1-view-" + k)?.classList.toggle("hidden", k !== tab);
+        const btn = document.getElementById("adm-sub1-" + k);
+        if (btn) {
+          btn.className = k === tab
+            ? "px-3 py-1.5 rounded-xl text-xs font-black bg-amber-500 text-white shrink-0"
+            : "px-3 py-1.5 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-700 shrink-0";
+        }
+      });
+    }
+
+    function switchAdminSub2(tab) {
+      ["teams", "passwords"].forEach(k => {
+        document.getElementById("adm-sub2-view-" + k)?.classList.toggle("hidden", k !== tab);
+        const btn = document.getElementById("adm-sub2-" + k);
+        if (btn) {
+          btn.className = k === tab
+            ? "flex-1 py-2 rounded-xl text-xs font-black bg-amber-500 text-white"
+            : "flex-1 py-2 rounded-xl text-xs font-bold bg-white border border-slate-200 text-slate-700";
+        }
+      });
+    }
+
+    function switchAchieverSubTab(tab) {
+      const isSummary = tab === "summary";
+      document.getElementById("adm-achiever-summary-panel")?.classList.toggle("hidden", !isSummary);
+      document.getElementById("adm-achiever-list-panel")?.classList.toggle("hidden", isSummary);
+
+      const btnSum = document.getElementById("btn-achiever-tab-summary");
+      const btnList = document.getElementById("btn-achiever-tab-list");
+      if (btnSum) {
+        btnSum.className = isSummary
+          ? "py-1.5 rounded-lg text-[11px] font-black bg-white text-amber-900 shadow-2xs transition"
+          : "py-1.5 rounded-lg text-[11px] font-bold text-slate-600 hover:text-slate-900 transition";
+      }
+      if (btnList) {
+        btnList.className = !isSummary
+          ? "py-1.5 rounded-lg text-[11px] font-black bg-white text-amber-900 shadow-2xs transition"
+          : "py-1.5 rounded-lg text-[11px] font-bold text-slate-600 hover:text-slate-900 transition";
       }
     }
 
